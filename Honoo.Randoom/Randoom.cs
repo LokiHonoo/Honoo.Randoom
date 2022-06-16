@@ -1,0 +1,491 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
+
+namespace Honoo
+{
+    /// <summary>
+    /// 加强型随机值生成器。
+    /// </summary>
+    public sealed class Randoom : IDisposable
+    {
+        #region 成员
+
+        /// <summary>英文字母。</summary>
+        private static readonly char[] _alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+
+        /// <summary>英文字母，不包括字形易混淆的字符。</summary>
+        private static readonly char[] _alphabetLess = "bcdfghjkmpqrtvwxyBCDFGHJKMPQRTVWXY".ToCharArray();
+
+        /// <summary>阿拉伯数字。</summary>
+        private static readonly char[] _digital = "0123456789".ToCharArray();
+
+        /// <summary>阿拉伯数字，不包括字形易混淆的字符。</summary>
+        private static readonly char[] _digitalLess = "2346789".ToCharArray();
+
+        /// <summary>十六进制字符。</summary>
+        private static readonly char[] _hex = "0123456789abcdef".ToCharArray();
+
+        /// <summary>英文字母和阿拉伯数字。</summary>
+        private static readonly char[] _mixture = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+
+        /// <summary>英文字母和阿拉伯数字，不包括字形易混淆的字符。</summary>
+        private static readonly char[] _mixtureLess = "2346789bcdfghjkmpqrtvwxyBCDFGHJKMPQRTVWXY".ToCharArray();
+
+        private bool _disposed;
+        private byte[] _hash;
+        private HashAlgorithm _hashAlgorithm;
+        private byte[] _tmp = new byte[8];
+
+        #endregion 成员
+
+        #region 构造
+
+        /// <summary>
+        /// 创建 Randoom 的新实例。
+        /// </summary>
+        public Randoom()
+        {
+            _hashAlgorithm = HashAlgorithm.Create("SHA1");
+            _hash = _hashAlgorithm.ComputeHash(Guid.NewGuid().ToByteArray());
+        }
+
+        /// <summary>
+        /// 创建 Randoom 的新实例。
+        /// </summary>
+        /// <param name="hashAlgorithm"></param>
+        public Randoom(HashAlgorithm hashAlgorithm)
+        {
+            _hashAlgorithm = hashAlgorithm ?? throw new ArgumentNullException(nameof(hashAlgorithm));
+            _hash = _hashAlgorithm.ComputeHash(Guid.NewGuid().ToByteArray());
+        }
+
+        /// <summary>
+        /// 释放由 <see cref="Randoom"/> 使用的资源。
+        /// </summary>
+        ~Randoom()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// 执行与释放或重置非托管资源关联的的应用程序定义的任务。
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// 释放由 <see cref="Randoom"/> 使用的非托管资源。
+        /// </summary>
+        /// <param name="disposing"></param>
+        private void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _hashAlgorithm.Dispose();
+                    _hashAlgorithm = null;
+                }
+                _hash = null;
+                _tmp = null;
+                _disposed = true;
+            }
+        }
+
+        #endregion 构造
+
+        /// <summary>
+        /// 返回一个非负随机整数。
+        /// <para/>返回结果：大于或等于 0 且小于 <see cref="int.MaxValue"/> 的 32 位有符号整数。
+        /// </summary>
+        /// <returns></returns>
+        public int Next()
+        {
+            return Next(0, int.MaxValue);
+        }
+
+        /// <summary>
+        /// 返回一个小于所指定最大值的非负随机整数。
+        /// <para/>返回结果：大于或等于 0 且小于 maxValue 的 32 位有符号整数。
+        /// </summary>
+        /// <param name="maxValue"></param>
+        /// <returns></returns>
+        public int Next(int maxValue)
+        {
+            return Next(0, maxValue);
+        }
+
+        /// <summary>
+        /// 返回在指定范围内的任意整数。
+        /// <para/>返回结果：一个大于等于 minValue 且小于 maxValue 的 32 位有符号整数。
+        /// </summary>
+        /// <param name="minValue"></param>
+        /// <param name="maxValue"></param>
+        /// <returns></returns>
+        public int Next(int minValue, int maxValue)
+        {
+            double value = Simple();
+            value *= (maxValue - minValue);
+            value += minValue;
+            if (value < minValue)
+            {
+                value = minValue;
+            }
+            if (value >= maxValue)
+            {
+                value = maxValue - 1;
+            }
+            return (int)value;
+        }
+
+        /// <summary>
+        /// 用加强型随机值序列填充字节数组。
+        /// </summary>
+        /// <param name="buffer"></param>
+        public void NextBytes(byte[] buffer)
+        {
+            NextBytes(buffer, 0, buffer.Length);
+        }
+
+        /// <summary>
+        /// 用加强型随机值序列填充字节数组。
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <param name="offset"></param>
+        /// <param name="length"></param>
+        public void NextBytes(byte[] buffer, int offset, int length)
+        {
+            int len;
+            while (length > 0)
+            {
+                len = Math.Min(_hash.Length, length);
+                Buffer.BlockCopy(_hash, 0, buffer, offset, len);
+                _hash = _hashAlgorithm.ComputeHash(_hash);
+                length -= len;
+                offset += len;
+            }
+        }
+
+        /// <summary>
+        /// 返回一个大于或等于 0.0 且小于 1.0 的随机浮点数。
+        /// <para/>返回结果：大于或等于 0.0 且小于 1.0 的双精度浮点数。
+        /// </summary>
+        /// <returns></returns>
+        public double NextDouble()
+        {
+            return Simple();
+        }
+
+        /// <summary>
+        /// 用加强型随机非零值序列填充字节数组。
+        /// </summary>
+        /// <param name="buffer"></param>
+        public void NextNonZeroBytes(byte[] buffer)
+        {
+            NextNonZeroBytes(buffer, 0, buffer.Length);
+        }
+
+        /// <summary>
+        /// 用加强型随机非零值序列填充字节数组。
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <param name="offset"></param>
+        /// <param name="length"></param>
+        public void NextNonZeroBytes(byte[] buffer, int offset, int length)
+        {
+            int offsetT;
+            while (length > 0)
+            {
+                offsetT = 0;
+                while (length > 0 || offsetT < _hash.Length)
+                {
+                    if (_hash[offsetT] > 0x00)
+                    {
+                        buffer[offset] = _hash[offsetT];
+                        offsetT++;
+                        offset++;
+                        length--;
+                    }
+                }
+                _hash = _hashAlgorithm.ComputeHash(_hash);
+            }
+        }
+
+        private IList<int> Next(int count, int minValue, int maxValue)
+        {
+            List<double> doubles = new List<double>();
+            int offset;
+            while (count > 0)
+            {
+                offset = 0;
+                while (count > 0 && offset + 8 < _hash.Length)
+                {
+                    Buffer.BlockCopy(_hash, offset, _tmp, 0, _tmp.Length);
+                    _tmp[6] |= 0xA0;
+                    _tmp[7] = 0x3F;
+                    double d = BitConverter.ToDouble(_tmp, 0);
+                    if (d < 0.1d)
+                    {
+                        d *= 10d;
+                    }
+                    if (d >= 1d)
+                    {
+                        d -= 1d;
+                    }
+                    doubles.Add(d);
+                    offset += 8;
+                    count--;
+                }
+                _hash = _hashAlgorithm.ComputeHash(_hash);
+            }
+            //
+            List<int> result = new List<int>();
+            for (int i = 0; i < doubles.Count; i++)
+            {
+                double d = doubles[i];
+                d *= (maxValue - minValue);
+                d += minValue;
+                if (d < minValue)
+                {
+                    d = minValue;
+                }
+                if (d >= maxValue)
+                {
+                    d = maxValue - 1;
+                }
+                result.Add((int)d);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 返回一个大于或等于 0.0 且小于 1.0 的随机浮点数。
+        /// <para/>返回结果：大于或等于 0.0 且小于 1.0 的双精度浮点数。
+        /// </summary>
+        /// <returns></returns>
+        private double Simple()
+        {
+            Buffer.BlockCopy(_hash, 0, _tmp, 0, _tmp.Length);
+            _tmp[6] |= 0xA0;
+            _tmp[7] = 0x3F;
+            double result = BitConverter.ToDouble(_tmp, 0);
+            if (result < 0.1d)
+            {
+                result *= 10d;
+            }
+            if (result >= 1d)
+            {
+                result -= 1d;
+            }
+            _hash = _hashAlgorithm.ComputeHash(_hash);
+            return result;
+        }
+
+        #region 随机字符串
+
+        /// <summary>
+        /// 返回一个指定字符范围的随机字符串。
+        /// <para/>返回结果：指定字符范围的随机字符串。
+        /// <para/>字符范围标记：
+        /// <para/>'d' 阿拉伯数字，不包括字形易混淆的字符。
+        /// <para/>'D' 阿拉伯数字。
+        /// <para/>'a' 英文字母，不包括字形易混淆的字符。
+        /// <para/>'A' 英文字母。
+        /// <para/>'m' 英文字母和阿拉伯数字，不包括字形易混淆的字符。
+        /// <para/>'M' 英文字母和阿拉伯数字。
+        /// <para/>'h' 十六进制字符。
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public string NextString(char token, int count)
+        {
+            IList<int> positions;
+            char[] chars;
+            switch (token)
+            {
+                case 'd': positions = Next(count, 0, _digitalLess.Length); chars = _digitalLess; break;
+                case 'D': positions = Next(count, 0, _digital.Length); chars = _digital; break;
+                case 'a': positions = Next(count, 0, _alphabetLess.Length); chars = _alphabetLess; break;
+                case 'A': positions = Next(count, 0, _alphabet.Length); chars = _alphabet; break;
+                case 'm': positions = Next(count, 0, _mixtureLess.Length); chars = _mixtureLess; break;
+                case 'M': positions = Next(count, 0, _mixture.Length); chars = _mixture; break;
+                case 'h': positions = Next(count, 0, _hex.Length); chars = _hex; break;
+                default: positions = null; chars = null; break;
+            }
+            if (positions is null || chars is null)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                StringBuilder result = new StringBuilder();
+                foreach (int position in positions)
+                {
+                    result.Append(chars[position]);
+                }
+                return result.ToString();
+            }
+        }
+
+        /// <summary>
+        /// 返回一个指定字符范围的随机字符串。
+        /// <para/>返回结果：指定字符范围的随机字符串。
+        /// <para/>字符掩码标记：
+        /// <para/>'d' 阿拉伯数字，不包括字形易混淆的字符。
+        /// <para/>'D' 阿拉伯数字。
+        /// <para/>'a' 英文字母，不包括字形易混淆的字符。
+        /// <para/>'A' 英文字母。
+        /// <para/>'m' 英文字母和阿拉伯数字，不包括字形易混淆的字符。
+        /// <para/>'M' 英文字母和阿拉伯数字。
+        /// <para/>'h' 十六进制字符。
+        /// <para/>'c' 使用自定义字符。需配合 '@' 指示符同时使用。
+        /// <para/>'@' 指示符之后的字符作为自定义字符。需配合 'c' 指示符同时使用。
+        /// <para/>'+' 指示符之后的随机字符转换为大写形式。不影响直接输出指示符 '!...!'。
+        /// <para/>'-' 指示符之后的随机字符转换为小写形式。不影响直接输出指示符 '!...!'。
+        /// <para/>'!...!' 指示符之内的字符直接输出，不作为掩码字符。
+        /// <para/>实例：
+        /// <para/>+mmmmm!-!mmmmm!-!mmmmm!-!mmmmm!-!mmmmm 模拟 Windows 序列号。
+        /// <para/>hhhhhhhh!-!hhhh!-!hhhh!-!hhhh!-!hhhhhhhhhhhh 模拟 GUID。
+        /// <para/>!WPD888-5!DDDD!-!DDDDD!-!DDDDD 模拟 Macromedia 8 序列号。
+        /// <para/>cccccccccccccccccccccccc@ABCabc12345~!@#$%^* 自定义字符。
+        /// </summary>
+        /// <param name="mark"></param>
+        /// <returns></returns>
+        public string NextString(string mark)
+        {
+            char[] customs = null;
+            int offset = mark.IndexOf('@');
+            if (offset > 0)
+            {
+                customs = mark.ToCharArray(offset + 1, mark.Length - offset - 1);
+            }
+            else
+            {
+                offset = mark.Length;
+            }
+            char[] marks = mark.ToCharArray(0, offset);
+            //
+            Dictionary<char, Room> rooms = new Dictionary<char, Room>();
+            List<char> tags = new List<char>();
+            List<char> sens = new List<char>();
+            bool direct = false;
+            char sen = '.';
+            foreach (char c in marks)
+            {
+                if (direct)
+                {
+                    switch (c)
+                    {
+                        case '!': direct = false; break;
+                        default: tags.Add('!'); sens.Add(c); break;
+                    }
+                }
+                else
+                {
+                    switch (c)
+                    {
+                        case 'd':
+                        case 'D':
+                        case 'a':
+                        case 'A':
+                        case 'm':
+                        case 'M':
+                        case 'h':
+                        case 'c': tags.Add(c); RecordToRoom(rooms, c); sens.Add(sen); break;
+                        case '+': sen = '+'; break;
+                        case '-': sen = '-'; break;
+                        case '!': direct = true; break;
+                        default: throw new ArgumentException($"掩码/指示符不正确，\"{c}\"。");
+                    }
+                }
+            }
+            foreach (KeyValuePair<char, Room> room in rooms)
+            {
+                switch (room.Key)
+                {
+                    case 'd': CreateRoomRands(room.Value, _digitalLess); break;
+                    case 'D': CreateRoomRands(room.Value, _digital); break;
+                    case 'a': CreateRoomRands(room.Value, _alphabetLess); break;
+                    case 'A': CreateRoomRands(room.Value, _alphabet); break;
+                    case 'm': CreateRoomRands(room.Value, _mixtureLess); break;
+                    case 'M': CreateRoomRands(room.Value, _mixture); break;
+                    case 'h': CreateRoomRands(room.Value, _hex); break;
+                    case 'c': CreateRoomRands(room.Value, customs); break;
+                    default: break;
+                }
+            }
+            char[] chars = sens.ToArray();
+            for (int i = 0; i < tags.Count; i++)
+            {
+                if (tags[i] != '!')
+                {
+                    Room room = rooms[tags[i]];
+                    chars[i] = room.Rands[room.Index];
+                    room.Index++;
+                }
+            }
+            string upp = new string(chars).ToUpperInvariant();
+            string low = new string(chars).ToLowerInvariant();
+            for (int i = 0; i < sens.Count; i++)
+            {
+                if (sens[i] == '+')
+                {
+                    chars[i] = upp[i];
+                }
+                else if (sens[i] == '-')
+                {
+                    chars[i] = low[i];
+                }
+            }
+            return new string(chars);
+        }
+
+        private void CreateRoomRands(Room room, char[] source)
+        {
+            if (source != null && source.Length > 0)
+            {
+                IList<int> positions = Next(room.Count, 0, source.Length);
+                List<char> chars = new List<char>();
+                foreach (int position in positions)
+                {
+                    chars.Add(source[position]);
+                }
+                room.Rands = chars.ToArray();
+                room.Index = 0;
+            }
+            else
+            {
+                room.Rands = new char[room.Count];
+                room.Index = 0;
+            }
+        }
+
+        private void RecordToRoom(Dictionary<char, Room> rooms, char mark)
+        {
+            if (rooms.ContainsKey(mark))
+            {
+                Room room = rooms[mark];
+                room.Count += 1;
+            }
+            else
+            {
+                rooms.Add(mark, new Room() { Count = 1 });
+            }
+        }
+
+        private sealed class Room
+        {
+            internal int Count { get; set; }
+            internal int Index { get; set; }
+            internal char[] Rands { get; set; }
+        }
+
+        #endregion 随机字符串
+    }
+}
