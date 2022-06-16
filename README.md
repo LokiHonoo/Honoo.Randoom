@@ -2,6 +2,7 @@
 
 ## Test
 
+```Console
 Randoom.NextDouble()
 0.498213040565962
 0.233153411108182
@@ -24,7 +25,9 @@ Randoom.NextDouble()
 0.12568470329311
 0.420497434875228
 0.87201428640262
+```
 
+```Console
 Randoom.Next()
 1204110923
 1551120384
@@ -47,7 +50,9 @@ Randoom.Next()
 1461730442
 1747906261
 1581674750
+```
 
+```Console
 Randoom.Next(90000)
 46378
 44309
@@ -70,7 +75,9 @@ Randoom.Next(90000)
 13165
 19940
 76584
+```
 
+```Console
 Randoom.Next(-30,30)
 -10
 -14
@@ -93,7 +100,9 @@ Randoom.Next(-30,30)
 4
 -24
 -23
+```
 
+```Console
 Randoom.NextString('m',60)
 NyvUXDHzrBNJuVuuFywCwwlAyaCCznCywWCOm6IEXuKAA7zOASfhk6yVIDvF
 cCpZAiYvWwxSvQFGsONG7XlSEYOLcDDEPGOFNzoofq8kuFsTCyB76Z6s7w6l
@@ -105,7 +114,9 @@ mYFOB7TK7WuGSGlP8w6joAUxDkVZlEjv6YIzVuqx67poLNESRvU6XIhVwPpp
 BNqzlkywZJGW6SQbhlu8qrQnWTkMuoCsnDuRBNojJvLO6xENILQQN6unBxFq
 vv2OxrJT7G7zpZWrH8Zy6nkzEALmn6xrVtFNPOxvYdlPEzQIyMUGZLDiGq7x
 tp7RtALKEUJnxpK76xJ67ZQWuNnLAhS6ApBzRWk7d5oJhGHlJfyNTAX6hU7P
+```
 
+```Console
 Randoom.NextString("+mmmmm!-!mmmmm!-!mmmmm!-!mmmmm!-!mmmmm")
 GTYDM-GWKDT-7QMC8-TPDCV-KCMJ8
 JQ6HW-76R7J-2WRXY-VPWYH-Q7YWJ
@@ -125,3 +136,4 @@ Randoom.NextString("cccccccccccccccccccccccc@ABCabc12345~!@#$%^*")
 5!%3^~!bB5%*!*1$5B%C3@15
 C~5@5~C!~c1%*55%@@c^2443
 *$2%C$2#5@ab33b5C^43@*%#
+```
