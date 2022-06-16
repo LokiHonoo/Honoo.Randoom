@@ -36,6 +36,7 @@ namespace Honoo
         private bool _disposed;
         private byte[] _hash;
         private HashAlgorithm _hashAlgorithm;
+        private IDictionary<char, Room> _rooms;
         private byte[] _tmp = new byte[8];
 
         #endregion 成员
@@ -348,6 +349,7 @@ namespace Honoo
         /// <para/>'@' 指示符之后的字符作为自定义字符。需配合 'c' 指示符同时使用。
         /// <para/>'+' 指示符之后的随机字符转换为大写形式。不影响直接输出指示符 '!...!'。
         /// <para/>'-' 指示符之后的随机字符转换为小写形式。不影响直接输出指示符 '!...!'。
+        /// <para/>'.' 指示符之后的随机字符不再进行大小写转换。
         /// <para/>'!...!' 指示符之内的字符直接输出，不作为掩码字符。
         /// <para/>实例：
         /// <para/>+mmmmm!-!mmmmm!-!mmmmm!-!mmmmm!-!mmmmm 模拟 Windows 序列号。
@@ -359,6 +361,18 @@ namespace Honoo
         /// <returns></returns>
         public string NextString(string mark)
         {
+            if (_rooms is null)
+            {
+                InitRooms();
+            }
+            else
+            {
+                foreach (KeyValuePair<char, Room> room in _rooms)
+                {
+                    room.Value.Reset();
+                }
+            }
+            //
             char[] customs = null;
             int offset = mark.IndexOf('@');
             if (offset > 0)
@@ -369,9 +383,9 @@ namespace Honoo
             {
                 offset = mark.Length;
             }
+            _rooms['c'].Source = customs;
             char[] marks = mark.ToCharArray(0, offset);
             //
-            Dictionary<char, Room> rooms = new Dictionary<char, Room>();
             List<char> tags = new List<char>();
             List<char> sens = new List<char>();
             bool direct = false;
@@ -397,36 +411,26 @@ namespace Honoo
                         case 'm':
                         case 'M':
                         case 'h':
-                        case 'c': tags.Add(c); RecordToRoom(rooms, c); sens.Add(sen); break;
+                        case 'c': tags.Add(c); _rooms[c].Count += 1; ; sens.Add(sen); break;
                         case '+': sen = '+'; break;
                         case '-': sen = '-'; break;
+                        case '.': sen = '.'; break;
                         case '!': direct = true; break;
-                        default: throw new ArgumentException($"掩码/指示符不正确，\"{c}\"。");
+                        default: throw new ArgumentException($"掩码/指示符不正确 \"{c}\"。");
                     }
                 }
             }
-            foreach (KeyValuePair<char, Room> room in rooms)
+            foreach (KeyValuePair<char, Room> room in _rooms)
             {
-                switch (room.Key)
-                {
-                    case 'd': CreateRoomRands(room.Value, _digitalLess); break;
-                    case 'D': CreateRoomRands(room.Value, _digital); break;
-                    case 'a': CreateRoomRands(room.Value, _alphabetLess); break;
-                    case 'A': CreateRoomRands(room.Value, _alphabet); break;
-                    case 'm': CreateRoomRands(room.Value, _mixtureLess); break;
-                    case 'M': CreateRoomRands(room.Value, _mixture); break;
-                    case 'h': CreateRoomRands(room.Value, _hex); break;
-                    case 'c': CreateRoomRands(room.Value, customs); break;
-                    default: break;
-                }
+                room.Value.GenerateRand();
             }
             char[] chars = sens.ToArray();
             for (int i = 0; i < tags.Count; i++)
             {
                 if (tags[i] != '!')
                 {
-                    Room room = rooms[tags[i]];
-                    chars[i] = room.Rands[room.Index];
+                    Room room = _rooms[tags[i]];
+                    chars[i] = room.Rand[room.Index];
                     room.Index++;
                 }
             }
@@ -446,44 +450,75 @@ namespace Honoo
             return new string(chars);
         }
 
-        private void CreateRoomRands(Room room, char[] source)
+        private void InitRooms()
         {
-            if (source != null && source.Length > 0)
+            _rooms = new Dictionary<char, Room>
             {
-                IList<int> positions = Next(room.Count, 0, source.Length);
-                List<char> chars = new List<char>();
-                foreach (int position in positions)
-                {
-                    chars.Add(source[position]);
-                }
-                room.Rands = chars.ToArray();
-                room.Index = 0;
-            }
-            else
-            {
-                room.Rands = new char[room.Count];
-                room.Index = 0;
-            }
-        }
-
-        private void RecordToRoom(Dictionary<char, Room> rooms, char mark)
-        {
-            if (rooms.ContainsKey(mark))
-            {
-                Room room = rooms[mark];
-                room.Count += 1;
-            }
-            else
-            {
-                rooms.Add(mark, new Room() { Count = 1 });
-            }
+                { 'd', new Room(this,_digitalLess) },
+                { 'D', new Room(this,_digital) },
+                { 'a', new Room(this,_alphabetLess) },
+                { 'A', new Room(this,_alphabet) },
+                { 'm', new Room(this,_mixtureLess) },
+                { 'M', new Room(this,_mixture) },
+                { 'h', new Room(this,_hex) },
+                { 'c', new Room(this) }
+            };
         }
 
         private sealed class Room
         {
+            private readonly Randoom _randoom;
+
+            internal Room(Randoom randoom)
+            {
+                _randoom = randoom;
+            }
+
+            internal Room(Randoom randoom, char[] source)
+            {
+                _randoom = randoom;
+                this.Source = source;
+            }
+
             internal int Count { get; set; }
+
             internal int Index { get; set; }
-            internal char[] Rands { get; set; }
+
+            internal char[] Rand { get; set; }
+
+            internal char[] Source { get; set; }
+
+            internal void GenerateRand()
+            {
+                if (this.Count > 0)
+                {
+                    if (this.Source is null)
+                    {
+                        this.Rand = new char[this.Count];
+                        for (int i = 0; i < this.Rand.Length; i++)
+                        {
+                            this.Rand[i] = 'c';
+                        }
+                    }
+                    else
+                    {
+                        IList<int> positions = _randoom.Next(this.Count, 0, this.Source.Length);
+                        List<char> chars = new List<char>();
+                        foreach (int position in positions)
+                        {
+                            chars.Add(this.Source[position]);
+                        }
+                        this.Rand = chars.ToArray();
+                    }
+                }
+            }
+
+            internal void Reset()
+            {
+                this.Count = 0;
+                this.Rand = null;
+                this.Index = 0;
+            }
         }
 
         #endregion 随机字符串

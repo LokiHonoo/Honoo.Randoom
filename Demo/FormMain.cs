@@ -68,6 +68,7 @@ namespace Demo
             description.AppendLine("'@' 指示符之后的字符作为自定义字符。需配合 'c' 指示符同时使用。");
             description.AppendLine("'+' 指示符之后的随机字符转换为大写形式。不影响直接输出指示符 '!...!'。");
             description.AppendLine("'-' 指示符之后的随机字符转换为小写形式。不影响直接输出指示符 '!...!'。");
+            description.AppendLine("'.' 指示符之后的随机字符不再进行大小写转换。");
             description.AppendLine("'!...!' 指示符之内的字符直接输出，不作为掩码字符。");
             description.AppendLine("实例：");
             description.AppendLine("+mmmmm!-!mmmmm!-!mmmmm!-!mmmmm!-!mmmmm 模拟 Windows 序列号。");
