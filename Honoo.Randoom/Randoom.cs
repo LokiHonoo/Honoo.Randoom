@@ -227,7 +227,7 @@ namespace Honoo
                 while (count > 0 && offset + 8 < _hash.Length)
                 {
                     Buffer.BlockCopy(_hash, offset, _tmp, 0, _tmp.Length);
-                    _tmp[6] |= 0xA0;
+                    _tmp[6] |= 0xF0;
                     _tmp[7] = 0x3F;
                     double d = BitConverter.ToDouble(_tmp, 0);
                     if (d < 0.1d)
@@ -272,7 +272,7 @@ namespace Honoo
         private double Simple()
         {
             Buffer.BlockCopy(_hash, 0, _tmp, 0, _tmp.Length);
-            _tmp[6] |= 0xA0;
+            _tmp[6] |= 0xF0;
             _tmp[7] = 0x3F;
             double result = BitConverter.ToDouble(_tmp, 0);
             if (result < 0.1d)
@@ -350,12 +350,13 @@ namespace Honoo
         /// <para/>'+' 指示符之后的随机字符转换为大写形式。不影响直接输出指示符 '!...!'。
         /// <para/>'-' 指示符之后的随机字符转换为小写形式。不影响直接输出指示符 '!...!'。
         /// <para/>'.' 指示符之后的随机字符不再进行大小写转换。
-        /// <para/>'!...!' 指示符之内的字符直接输出，不作为掩码字符。
+        /// <para/>'(...)' 指示符之内的字符直接输出，不作为掩码字符。
+        /// <para/>'[number]' 指示符之内的数字表示输出前一随机字符的个数。
         /// <para/>实例：
-        /// <para/>+mmmmm!-!mmmmm!-!mmmmm!-!mmmmm!-!mmmmm 模拟 Windows 序列号。
-        /// <para/>hhhhhhhh!-!hhhh!-!hhhh!-!hhhh!-!hhhhhhhhhhhh 模拟 GUID。
-        /// <para/>!WPD888-5!DDDD!-!DDDDD!-!DDDDD 模拟 Macromedia 8 序列号。
-        /// <para/>cccccccccccccccccccccccc@ABCabc12345~!@#$%^* 自定义字符。
+        /// <para/>+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm 模拟 Windows 序列号。
+        /// <para/>hhhhhhhh(-)hhhh(-)hhhh(-)hhhh(-)hhhhhhhhhhhh 模拟 GUID。
+        /// <para/>(WPD888-5)DDDD(-)DDDDD(-)DDDDD 模拟 Macromedia 8 序列号。
+        /// <para/>(AAA)cccccc(---)c[12]@ABCabc12345~!@#$%^* 自定义字符。
         /// </summary>
         /// <param name="mark"></param>
         /// <returns></returns>
@@ -390,14 +391,36 @@ namespace Honoo
             List<char> sens = new List<char>();
             bool direct = false;
             char sen = '.';
+            char cRepeat = '*';
+            bool repeat = false;
+            StringBuilder number = new StringBuilder();
             foreach (char c in marks)
             {
                 if (direct)
                 {
                     switch (c)
                     {
-                        case '!': direct = false; break;
+                        case ')': direct = false; break;
                         default: tags.Add('!'); sens.Add(c); break;
+                    }
+                }
+                else if (repeat)
+                {
+                    switch (c)
+                    {
+                        case ']':
+                            int count = int.Parse(number.ToString());
+                            _rooms[cRepeat].Count += count;
+                            for (int i = 0; i < count; i++)
+                            {
+                                tags.Add(cRepeat);
+                                sens.Add(sen);
+                            }
+                            number.Clear();
+                            repeat = false;
+                            break;
+
+                        default: number.Append(c); break;
                     }
                 }
                 else
@@ -411,11 +434,12 @@ namespace Honoo
                         case 'm':
                         case 'M':
                         case 'h':
-                        case 'c': tags.Add(c); _rooms[c].Count += 1; ; sens.Add(sen); break;
+                        case 'c': cRepeat = c; tags.Add(c); sens.Add(sen); _rooms[c].Count += 1; break;
                         case '+': sen = '+'; break;
                         case '-': sen = '-'; break;
                         case '.': sen = '.'; break;
-                        case '!': direct = true; break;
+                        case '(': direct = true; break;
+                        case '[': repeat = true; break;
                         default: throw new ArgumentException($"掩码/指示符不正确 \"{c}\"。");
                     }
                 }

@@ -1,6 +1,7 @@
 ﻿using Honoo;
 using System;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.Security.Cryptography;
 
 namespace test
 {
@@ -18,7 +19,7 @@ namespace test
                 Console.WriteLine("=======================================================================================");
 
                 Random random = new Random();
-                Randoom randoom = new Randoom();
+                Randoom randoom = new Randoom(SHA256.Create());
                 Console.WriteLine("Randoom.NextDouble()");
                 for (int i = 0; i < 10; i++)
                 {
@@ -55,7 +56,7 @@ namespace test
                 Console.WriteLine("Randoom.Next(-30,30)");
                 for (int i = 0; i < 10; i++)
                 {
-                    Console.WriteLine(randoom.Next(-30,30));
+                    Console.WriteLine(randoom.Next(-30, 30));
                 }
                 Console.WriteLine();
                 for (int i = 0; i < 10; i++)
@@ -69,31 +70,47 @@ namespace test
                     Console.WriteLine(randoom.NextString('M', 60));
                 }
                 Console.WriteLine();
-                Console.WriteLine("Randoom.NextString(\"+mmmmm!-!mmmmm!-!mmmmm!-!mmmmm!-!mmmmm\")");
-                Console.WriteLine(randoom.NextString("+mmmmm!-!mmmmm!-!mmmmm!-!mmmmm!-!mmmmm"));
-                Console.WriteLine(randoom.NextString("+mmmmm!-!mmmmm!-!mmmmm!-!mmmmm!-!mmmmm"));
-                Console.WriteLine(randoom.NextString("+mmmmm!-!mmmmm!-!mmmmm!-!mmmmm!-!mmmmm"));
+                Console.WriteLine("Randoom.NextString(\"+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm\")");
+                Console.WriteLine(randoom.NextString("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm"));
+                Console.WriteLine(randoom.NextString("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm"));
+                Console.WriteLine(randoom.NextString("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm"));
                 Console.WriteLine();
-                Console.WriteLine("Randoom.NextString(\"hhhhhhhh!-!hhhh!-!hhhh!-!hhhh!-!hhhhhhhhhhhh\")");
-                Console.WriteLine(randoom.NextString("hhhhhhhh!-!hhhh!-!hhhh!-!hhhh!-!hhhhhhhhhhhh"));
-                Console.WriteLine(randoom.NextString("hhhhhhhh!-!hhhh!-!hhhh!-!hhhh!-!hhhhhhhhhhhh"));
-                Console.WriteLine(randoom.NextString("hhhhhhhh!-!hhhh!-!hhhh!-!hhhh!-!hhhhhhhhhhhh"));
+                Console.WriteLine("Randoom.NextString(\"hhhhhhhh(-)hhhh(-)hhhh(-)hhhh(-)hhhhhhhhhhhh\")");
+                Console.WriteLine(randoom.NextString("hhhhhhhh(-)hhhh(-)hhhh(-)hhhh(-)hhhhhhhhhhhh"));
+                Console.WriteLine(randoom.NextString("hhhhhhhh(-)hhhh(-)hhhh(-)hhhh(-)hhhhhhhhhhhh"));
+                Console.WriteLine(randoom.NextString("hhhhhhhh(-)hhhh(-)hhhh(-)hhhh(-)hhhhhhhhhhhh"));
                 Console.WriteLine();
-                Console.WriteLine("Randoom.NextString(\"!WPD888-5!DDDD!-!DDDDD!-!DDDDD\")");
-                Console.WriteLine(randoom.NextString("!WPD888-5!DDDD!-!DDDDD!-!DDDDD"));
-                Console.WriteLine(randoom.NextString("!WPD888-5!DDDD!-!DDDDD!-!DDDDD"));
-                Console.WriteLine(randoom.NextString("!WPD888-5!DDDD!-!DDDDD!-!DDDDD"));
+                Console.WriteLine("Randoom.NextString(\"(WPD888-5)DDDD(-)DDDDD(-)DDDDD\")");
+                Console.WriteLine(randoom.NextString("(WPD888-5)DDDD(-)DDDDD(-)DDDDD"));
+                Console.WriteLine(randoom.NextString("(WPD888-5)DDDD(-)DDDDD(-)DDDDD"));
+                Console.WriteLine(randoom.NextString("(WPD888-5)DDDD(-)DDDDD(-)DDDDD"));
                 Console.WriteLine();
-                Console.WriteLine("Randoom.NextString(\"cccccccccccccccccccccccc@ABCabc12345~!@#$%^*\")");
-                Console.WriteLine(randoom.NextString("cccccccccccccccccccccccc@ABCabc12345~!@#$%^*"));
-                Console.WriteLine(randoom.NextString("cccccccccccccccccccccccc@ABCabc12345~!@#$%^*"));
-                Console.WriteLine(randoom.NextString("cccccccccccccccccccccccc@ABCabc12345~!@#$%^*"));
+                Console.WriteLine("Randoom.NextString(\"(AAA)cccccc(---)c[12]@ABCabc12345~!@#$%^*\")");
+                Console.WriteLine(randoom.NextString("(AAA)cccccc(---)c[12]@ABCabc12345~!@#$%^*"));
+                Console.WriteLine(randoom.NextString("(AAA)cccccc(---)c[12]@ABCabc12345~!@#$%^*"));
+                Console.WriteLine(randoom.NextString("(AAA)cccccc(---)c[12]@ABCabc12345~!@#$%^*"));
                 Console.WriteLine();
+                char[] mixture = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+                Dictionary<char, int[]> sta = new Dictionary<char, int[]>();
+                foreach (var m in mixture)
+                {
+                    sta.Add(m, new int[1]);
+                }
+                for (int i = 0; i < 1000; i++)
+                {
+                    string r = randoom.NextString('M', 16);
+                    foreach (var c in r)
+                    {
+                        sta[c][0] += 1;
+                    }
+                }
+                foreach (var item in sta)
+                {
+                    Console.WriteLine(item.Key + ": " + item.Value[0]);
+                }
+
                 Console.ReadKey(true);
             }
-
-
-
         }
     }
 }

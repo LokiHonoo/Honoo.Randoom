@@ -69,12 +69,13 @@ namespace Demo
             description.AppendLine("'+' 指示符之后的随机字符转换为大写形式。不影响直接输出指示符 '!...!'。");
             description.AppendLine("'-' 指示符之后的随机字符转换为小写形式。不影响直接输出指示符 '!...!'。");
             description.AppendLine("'.' 指示符之后的随机字符不再进行大小写转换。");
-            description.AppendLine("'!...!' 指示符之内的字符直接输出，不作为掩码字符。");
+            description.AppendLine("'(...)' 指示符之内的字符直接输出，不作为掩码字符。");
+            description.AppendLine("'[number]' 指示符之内的数字表示输出前一随机字符的个数。");
             description.AppendLine("实例：");
-            description.AppendLine("+mmmmm!-!mmmmm!-!mmmmm!-!mmmmm!-!mmmmm 模拟 Windows 序列号。");
-            description.AppendLine("hhhhhhhh!-!hhhh!-!hhhh!-!hhhh!-!hhhhhhhhhhhh 模拟 GUID。");
-            description.AppendLine("!WPD888-5!DDDD!-!DDDDD!-!DDDDD 模拟 Macromedia 8 序列号。");
-            description.AppendLine("cccccccccccccccccccccccc@ABCabc12345~!@#$%^* 自定义字符。");
+            description.AppendLine("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm 模拟 Windows 序列号。");
+            description.AppendLine("hhhhhhhh(-)hhhh(-)hhhh(-)hhhh(-)hhhhhhhhhhhh 模拟 GUID。");
+            description.AppendLine("(WPD888-5)DDDD(-)DDDDD(-)DDDDD 模拟 Macromedia 8 序列号。");
+            description.AppendLine("(AAA)cccccc(---)c[12]@ABCabc12345~!@#$%^* 自定义字符。");
             MessageBox.Show(description.ToString(), string.Empty, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -88,10 +89,10 @@ namespace Demo
             this.ComboBoxToken.Items.Add("'M' 英文字母和阿拉伯数字。");
             this.ComboBoxToken.Items.Add("'h' 十六进制字符。");
             this.ComboBoxToken.SelectedIndex = 4;
-            this.ComboBoxMark.Items.Add("+mmmmm!-!mmmmm!-!mmmmm!-!mmmmm!-!mmmmm");
-            this.ComboBoxMark.Items.Add("hhhhhhhh!-!hhhh!-!hhhh!-!hhhh!-!hhhhhhhhhhhh");
-            this.ComboBoxMark.Items.Add("!WPD888-5!DDDD!-!DDDDD!-!DDDDD");
-            this.ComboBoxMark.Items.Add("cccccccccccccccccccccccc@ABCabc12345~!@#$%^*");
+            this.ComboBoxMark.Items.Add("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm");
+            this.ComboBoxMark.Items.Add("hhhhhhhh(-)hhhh(-)hhhh(-)hhhh(-)hhhhhhhhhhhh");
+            this.ComboBoxMark.Items.Add("(WPD888-5)DDDD(-)DDDDD(-)DDDDD");
+            this.ComboBoxMark.Items.Add("(AAA)cccccc(---)c[12]@ABCabc12345~!@#$%^*");
         }
 
         private void ListViewResult_ItemActivate(object sender, EventArgs e)
