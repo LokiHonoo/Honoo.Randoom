@@ -19,16 +19,11 @@ namespace test
                 Console.WriteLine("=======================================================================================");
 
                 Random random = new Random();
-                Randoom randoom = new Randoom(SHA256.Create());
+                Randoom randoom = new Randoom(null, SHA256.Create());
                 Console.WriteLine("Randoom.NextDouble()");
                 for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(randoom.NextDouble());
-                }
-                Console.WriteLine();
-                for (int i = 0; i < 10; i++)
-                {
-                    Console.WriteLine(random.NextDouble());
                 }
                 Console.WriteLine();
                 Console.WriteLine("Randoom.Next()");
@@ -37,20 +32,10 @@ namespace test
                     Console.WriteLine(randoom.Next());
                 }
                 Console.WriteLine();
-                for (int i = 0; i < 10; i++)
-                {
-                    Console.WriteLine(random.Next());
-                }
-                Console.WriteLine();
                 Console.WriteLine("Randoom.Next(90000)");
                 for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(randoom.Next(90000));
-                }
-                Console.WriteLine();
-                for (int i = 0; i < 10; i++)
-                {
-                    Console.WriteLine(random.Next(90000));
                 }
                 Console.WriteLine();
                 Console.WriteLine("Randoom.Next(-30,30)");
@@ -59,15 +44,10 @@ namespace test
                     Console.WriteLine(randoom.Next(-30, 30));
                 }
                 Console.WriteLine();
-                for (int i = 0; i < 10; i++)
-                {
-                    Console.WriteLine(random.Next(-30, 30));
-                }
-                Console.WriteLine();
                 Console.WriteLine("Randoom.NextString('m',60)");
                 for (int i = 0; i < 10; i++)
                 {
-                    Console.WriteLine(randoom.NextString('M', 60));
+                    Console.WriteLine(randoom.NextString('m', 60));
                 }
                 Console.WriteLine();
                 Console.WriteLine("Randoom.NextString(\"+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm\")");
@@ -75,15 +55,20 @@ namespace test
                 Console.WriteLine(randoom.NextString("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm"));
                 Console.WriteLine(randoom.NextString("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm"));
                 Console.WriteLine();
-                Console.WriteLine("Randoom.NextString(\"hhhhhhhh(-)hhhh(-)hhhh(-)hhhh(-)hhhhhhhhhhhh\")");
-                Console.WriteLine(randoom.NextString("hhhhhhhh(-)hhhh(-)hhhh(-)hhhh(-)hhhhhhhhhhhh"));
-                Console.WriteLine(randoom.NextString("hhhhhhhh(-)hhhh(-)hhhh(-)hhhh(-)hhhhhhhhhhhh"));
-                Console.WriteLine(randoom.NextString("hhhhhhhh(-)hhhh(-)hhhh(-)hhhh(-)hhhhhhhhhhhh"));
+                Console.WriteLine("Randoom.NextString(\"h[8](-)h[4](-)h[4](-)h[4](-)h[12]\")");
+                Console.WriteLine(randoom.NextString("h[8](-)h[4](-)h[4](-)h[4](-)h[12]"));
+                Console.WriteLine(randoom.NextString("h[8](-)h[4](-)h[4](-)h[4](-)h[12]"));
+                Console.WriteLine(randoom.NextString("h[8](-)h[4](-)h[4](-)h[4](-)h[12]"));
                 Console.WriteLine();
                 Console.WriteLine("Randoom.NextString(\"(WPD888-5)DDDD(-)DDDDD(-)DDDDD\")");
                 Console.WriteLine(randoom.NextString("(WPD888-5)DDDD(-)DDDDD(-)DDDDD"));
                 Console.WriteLine(randoom.NextString("(WPD888-5)DDDD(-)DDDDD(-)DDDDD"));
                 Console.WriteLine(randoom.NextString("(WPD888-5)DDDD(-)DDDDD(-)DDDDD"));
+                Console.WriteLine();
+                Console.WriteLine("Randoom.NextString(\"(TB(667!)ED-)aaaaaa!-aaaaaaaa\")");
+                Console.WriteLine(randoom.NextString("(TB(667!)ED-)aaaaaa!-aaaaaaaa"));
+                Console.WriteLine(randoom.NextString("(TB(667!)ED-)aaaaaa!-aaaaaaaa"));
+                Console.WriteLine(randoom.NextString("(TB(667!)ED-)aaaaaa!-aaaaaaaa"));
                 Console.WriteLine();
                 Console.WriteLine("Randoom.NextString(\"(AAA)cccccc(---)c[12]@ABCabc12345~!@#$%^*\")");
                 Console.WriteLine(randoom.NextString("(AAA)cccccc(---)c[12]@ABCabc12345~!@#$%^*"));

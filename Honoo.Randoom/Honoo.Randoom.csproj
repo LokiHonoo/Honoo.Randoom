@@ -8,7 +8,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <SignAssembly>True</SignAssembly>
-	<Version>1.0.0</Version>
+	<Version>1.0.1</Version>
 	<Authors>Loki Honoo</Authors>
 	<Company>Loki Honoo</Company>
 	<Copyright>Copyright (C) Loki Honoo 2013. All rights reserved.</Copyright>
@@ -17,8 +17,7 @@
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<PackageProjectUrl>https://github.com/LokiHonoo/Honoo.Randoom</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/LokiHonoo/Honoo.Randoom</RepositoryUrl>
-	<Description>Security random.</Description>
-	<NeutralLanguage>en-US</NeutralLanguage>
+	<Description>Cross-platform random.</Description>
 	<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 	<AssemblyOriginatorKeyFile>Honoo.Randoom.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
