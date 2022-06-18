@@ -92,6 +92,7 @@ namespace Honoo
                     _hashAlgorithm.Dispose();
                     _hashAlgorithm = null;
                 }
+                _rooms = null;
                 _hash = null;
                 _tmp = null;
                 _disposed = true;
