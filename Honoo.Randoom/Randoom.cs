@@ -513,8 +513,9 @@ namespace Honoo
                     room.Index++;
                 }
             }
-            string upp = new string(chars).ToUpperInvariant();
-            string low = new string(chars).ToLowerInvariant();
+            string upp = new string(chars);
+            upp = upp.ToUpperInvariant();
+            string low = upp.ToLowerInvariant();
             for (int i = 0; i < sens.Count; i++)
             {
                 if (sens[i] == '+')
