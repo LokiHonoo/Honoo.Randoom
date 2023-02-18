@@ -53,32 +53,36 @@ namespace Honoo
         /// <summary>
         /// 创建 Randoom 的新实例。
         /// </summary>
-        /// <param name="collect">用于初始化的自定义采集数据，通常采集终端用户的鼠标、按键等行为。</param>
-        public Randoom(byte[] collect) : this(collect, HashAlgorithm.Create("SHA1"))
+        /// <param name="seed">额外的种子，通常采集终端用户的鼠标、按键等行为生成。</param>
+        public Randoom(byte[] seed) : this(seed, HashAlgorithm.Create("SHA1"))
         {
         }
 
         /// <summary>
         /// 创建 Randoom 的新实例。
         /// </summary>
-        /// <param name="collect">用于初始化的自定义采集数据，通常采集终端用户的鼠标、按键等行为。</param>
+        /// <param name="seed">额外的种子，通常采集终端用户的鼠标、按键等行为生成。</param>
         /// <param name="hashAlgorithm">用于随机数生成的 hash 算法实例。必须是 hash size 64 bits 以上的算法。</param>
-        public Randoom(byte[] collect, HashAlgorithm hashAlgorithm)
+        public Randoom(byte[] seed, HashAlgorithm hashAlgorithm)
         {
             _hashAlgorithm = hashAlgorithm ?? throw new ArgumentNullException(nameof(hashAlgorithm));
             byte[] guid = Guid.NewGuid().ToByteArray();
             byte[] buffer;
-            if (collect == null || collect.Length == 0)
+            if (seed == null || seed.Length == 0)
             {
                 buffer = guid;
             }
             else
             {
-                buffer = new byte[collect.Length + guid.Length];
-                Buffer.BlockCopy(collect, 0, buffer, 0, collect.Length);
-                Buffer.BlockCopy(guid, 0, buffer, collect.Length, guid.Length);
+                buffer = new byte[seed.Length + guid.Length];
+                Buffer.BlockCopy(seed, 0, buffer, 0, seed.Length);
+                Buffer.BlockCopy(guid, 0, buffer, seed.Length, guid.Length);
             }
             _hash = _hashAlgorithm.ComputeHash(buffer);
+            if (_hash.Length < 8)
+            {
+                throw new CryptographicException("Hash algorithm's hash size must be more than 64 bits.");
+            }
         }
 
         /// <summary>
@@ -495,7 +499,7 @@ namespace Honoo
                         case '(': direct = true; break;
                         case '!': directOne = true; break;
                         case '[': repeat = true; break;
-                        default: throw new ArgumentException($"掩码/指示符不正确 \"{c}\"。");
+                        default: throw new ArgumentException($"The mask string contains invalid character - \"{c}\".");
                     }
                 }
             }
