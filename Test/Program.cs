@@ -1,6 +1,7 @@
 ﻿using Honoo;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Security.Cryptography;
 
 namespace test
@@ -18,8 +19,7 @@ namespace test
                 Console.WriteLine();
                 Console.WriteLine("=======================================================================================");
 
-                Random random = new Random();
-                Randoom randoom = new Randoom(null, SHA256.Create());
+                var randoom = new Randoom(null, SHA256.Create());
                 Console.WriteLine("Randoom.NextDouble()");
                 for (int i = 0; i < 10; i++)
                 {
@@ -47,7 +47,7 @@ namespace test
                 Console.WriteLine("Randoom.NextString('m',60)");
                 for (int i = 0; i < 10; i++)
                 {
-                    Console.WriteLine(randoom.NextString('m', 60));
+                    Console.WriteLine(randoom.NextString(60, 'm'));
                 }
                 Console.WriteLine();
                 Console.WriteLine("Randoom.NextString(\"+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm\")");
@@ -75,25 +75,50 @@ namespace test
                 Console.WriteLine(randoom.NextString("(AAA)cccccc(---)c[12]@ABCabc12345~!@#$%^*"));
                 Console.WriteLine(randoom.NextString("(AAA)cccccc(---)c[12]@ABCabc12345~!@#$%^*"));
                 Console.WriteLine();
+                //
+                var sta1 = new Dictionary<int, int[]>();
+                int b = int.MaxValue / 10;
+                for (int i = 1; i <= 10; i++)
+                {
+                    sta1.Add(b * i, new int[1]);
+                }
+                for (int i = 0; i < 1000000; i++)
+                {
+                    int r = randoom.Next();
+                    foreach (var item in sta1)
+                    {
+                        if (r <= item.Key)
+                        {
+                            item.Value[0] += 1;
+                            break;
+                        }
+                    }
+                }
+                Console.WriteLine("1000000 int distributions: ");
+                foreach (var item in sta1)
+                {
+                    Console.WriteLine(("Rank " + item.Key + ": ").PadRight(18, ' ') + item.Value[0]);
+                }
+                Console.WriteLine();
+                var sta2 = new Dictionary<char, int[]>();
                 char[] mixture = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-                Dictionary<char, int[]> sta = new Dictionary<char, int[]>();
                 foreach (var m in mixture)
                 {
-                    sta.Add(m, new int[1]);
+                    sta2.Add(m, new int[1]);
                 }
                 for (int i = 0; i < 1000; i++)
                 {
-                    string r = randoom.NextString('M', 16);
+                    string r = randoom.NextString(16, 'M');
                     foreach (var c in r)
                     {
-                        sta[c][0] += 1;
+                        sta2[c][0] += 1;
                     }
                 }
-                foreach (var item in sta)
+                Console.WriteLine("16000 char distributions: ");
+                foreach (var item in sta2)
                 {
                     Console.WriteLine(item.Key + ": " + item.Value[0]);
                 }
-
                 Console.ReadKey(true);
             }
         }

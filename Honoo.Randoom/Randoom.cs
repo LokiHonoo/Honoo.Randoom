@@ -36,6 +36,7 @@ namespace Honoo
         private bool _disposed;
         private byte[] _hash;
         private HashAlgorithm _hashAlgorithm;
+        private int _hashIndex = 0;
         private IDictionary<char, Room> _rooms;
         private byte[] _tmp = new byte[8];
 
@@ -66,6 +67,10 @@ namespace Honoo
         public Randoom(byte[] seed, HashAlgorithm hashAlgorithm)
         {
             _hashAlgorithm = hashAlgorithm ?? throw new ArgumentNullException(nameof(hashAlgorithm));
+            if (_hashAlgorithm.HashSize < 64)
+            {
+                throw new CryptographicException("Hash algorithm's hash size must be more than 64 bits.");
+            }
             byte[] guid = Guid.NewGuid().ToByteArray();
             byte[] buffer;
             if (seed == null || seed.Length == 0)
@@ -79,10 +84,6 @@ namespace Honoo
                 Buffer.BlockCopy(guid, 0, buffer, seed.Length, guid.Length);
             }
             _hash = _hashAlgorithm.ComputeHash(buffer);
-            if (_hash.Length < 8)
-            {
-                throw new CryptographicException("Hash algorithm's hash size must be more than 64 bits.");
-            }
         }
 
         /// <summary>
@@ -103,21 +104,21 @@ namespace Honoo
         }
 
         /// <summary>
-        /// 释放由 <see cref="Randoom"/> 使用的非托管资源。
+        /// 释放由 <see cref="Randoom"/> 使用的资源。
         /// </summary>
-        /// <param name="disposing"></param>
+        /// <param name="disposing">释放非托管资源。</param>
         private void Dispose(bool disposing)
         {
             if (!_disposed)
             {
                 if (disposing)
                 {
-                    _hashAlgorithm.Dispose();
-                    _hashAlgorithm = null;
+                    _rooms = null;
+                    _hash = null;
+                    _tmp = null;
                 }
-                _rooms = null;
-                _hash = null;
-                _tmp = null;
+                _hashAlgorithm.Dispose();
+                _hashAlgorithm = null;
                 _disposed = true;
             }
         }
@@ -126,7 +127,6 @@ namespace Honoo
 
         /// <summary>
         /// 返回一个非负随机整数。
-        /// <para/>返回结果：大于或等于 0 且小于 <see cref="int.MaxValue"/> 的 32 位有符号整数。
         /// </summary>
         /// <returns></returns>
         public int Next()
@@ -136,9 +136,8 @@ namespace Honoo
 
         /// <summary>
         /// 返回一个小于所指定最大值的非负随机整数。
-        /// <para/>返回结果：大于或等于 0 且小于 maxValue 的 32 位有符号整数。
         /// </summary>
-        /// <param name="maxValue"></param>
+        /// <param name="maxValue">返回的随机数的上界（随机数不可取该上界值）。</param>
         /// <returns></returns>
         public int Next(int maxValue)
         {
@@ -147,31 +146,26 @@ namespace Honoo
 
         /// <summary>
         /// 返回在指定范围内的任意整数。
-        /// <para/>返回结果：一个大于等于 minValue 且小于 maxValue 的 32 位有符号整数。
         /// </summary>
-        /// <param name="minValue"></param>
-        /// <param name="maxValue"></param>
+        /// <param name="minValue">返回的随机数的下界（随机数可取该下界值）。</param>
+        /// <param name="maxValue">返回的随机数的上界（随机数不可取该上界值）。</param>
         /// <returns></returns>
         public int Next(int minValue, int maxValue)
         {
-            double value = Simple();
+            if (minValue > maxValue)
+            {
+                throw new ArgumentOutOfRangeException(nameof(minValue));
+            }
+            double value = NextDouble();
             value *= (maxValue - minValue);
             value += minValue;
-            if (value < minValue)
-            {
-                value = minValue;
-            }
-            if (value >= maxValue)
-            {
-                value = maxValue - 1;
-            }
             return (int)value;
         }
 
         /// <summary>
         /// 用加强型随机值序列填充字节数组。
         /// </summary>
-        /// <param name="buffer"></param>
+        /// <param name="buffer">要填充的字节数组。</param>
         public void NextBytes(byte[] buffer)
         {
             NextBytes(buffer, 0, buffer.Length);
@@ -180,130 +174,39 @@ namespace Honoo
         /// <summary>
         /// 用加强型随机值序列填充字节数组。
         /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="offset"></param>
-        /// <param name="length"></param>
+        /// <param name="buffer">要填充的字节数组。</param>
+        /// <param name="offset">从 <paramref name="buffer"/> 的指定偏移处开始填充。</param>
+        /// <param name="length">要填充的长度。</param>
         public void NextBytes(byte[] buffer, int offset, int length)
         {
-            int len;
             while (length > 0)
             {
-                len = Math.Min(_hash.Length, length);
-                Buffer.BlockCopy(_hash, 0, buffer, offset, len);
-                _hash = _hashAlgorithm.ComputeHash(_hash);
+                int len = Math.Min(_hash.Length - _hashIndex, length);
+                Buffer.BlockCopy(_hash, _hashIndex, buffer, offset, len);
                 length -= len;
                 offset += len;
+                _hashIndex += len;
+                if (_hashIndex >= _hash.Length)
+                {
+                    _hash = _hashAlgorithm.ComputeHash(_hash);
+                    _hashIndex = 0;
+                }
             }
         }
 
         /// <summary>
         /// 返回一个大于或等于 0.0 且小于 1.0 的随机浮点数。
-        /// <para/>返回结果：大于或等于 0.0 且小于 1.0 的双精度浮点数。
         /// </summary>
         /// <returns></returns>
         public double NextDouble()
         {
-            return Simple();
-        }
-
-        /// <summary>
-        /// 用加强型随机非零值序列填充字节数组。
-        /// </summary>
-        /// <param name="buffer"></param>
-        public void NextNonZeroBytes(byte[] buffer)
-        {
-            NextNonZeroBytes(buffer, 0, buffer.Length);
-        }
-
-        /// <summary>
-        /// 用加强型随机非零值序列填充字节数组。
-        /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="offset"></param>
-        /// <param name="length"></param>
-        public void NextNonZeroBytes(byte[] buffer, int offset, int length)
-        {
-            int offsetT;
-            while (length > 0)
+            if (_hash.Length - _hashIndex < 8)
             {
-                offsetT = 0;
-                while (length > 0 || offsetT < _hash.Length)
-                {
-                    if (_hash[offsetT] > 0x00)
-                    {
-                        buffer[offset] = _hash[offsetT];
-                        offset++;
-                        length--;
-                    }
-                    offsetT++;
-                }
                 _hash = _hashAlgorithm.ComputeHash(_hash);
+                _hashIndex = 0;
             }
-        }
-
-        private IList<int> Next(int count, int minValue, int maxValue)
-        {
-            List<double> doubles = new List<double>();
-            int offset;
-            while (count > 0)
-            {
-                offset = 0;
-                while (count > 0 && offset + 8 < _hash.Length)
-                {
-                    Buffer.BlockCopy(_hash, offset, _tmp, 0, _tmp.Length);
-                    if (BitConverter.IsLittleEndian)
-                    {
-                        _tmp[6] |= 0xF0;
-                        _tmp[7] = 0x3F;
-                    }
-                    else
-                    {
-                        _tmp[0] = 0x3F;
-                        _tmp[1] |= 0xF0;
-                    }
-                    double d = BitConverter.ToDouble(_tmp, 0);
-                    if (d < 0.1d)
-                    {
-                        d *= 10d;
-                    }
-                    if (d >= 1d)
-                    {
-                        d -= 1d;
-                    }
-                    doubles.Add(d);
-                    offset += 8;
-                    count--;
-                }
-                _hash = _hashAlgorithm.ComputeHash(_hash);
-            }
-            //
-            List<int> result = new List<int>();
-            for (int i = 0; i < doubles.Count; i++)
-            {
-                double d = doubles[i];
-                d *= (maxValue - minValue);
-                d += minValue;
-                if (d < minValue)
-                {
-                    d = minValue;
-                }
-                if (d >= maxValue)
-                {
-                    d = maxValue - 1;
-                }
-                result.Add((int)d);
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// 返回一个大于或等于 0.0 且小于 1.0 的随机浮点数。
-        /// <para/>返回结果：大于或等于 0.0 且小于 1.0 的双精度浮点数。
-        /// </summary>
-        /// <returns></returns>
-        private double Simple()
-        {
-            Buffer.BlockCopy(_hash, 0, _tmp, 0, _tmp.Length);
+            Buffer.BlockCopy(_hash, _hashIndex, _tmp, 0, 8);
+            _hashIndex += 8;
             if (BitConverter.IsLittleEndian)
             {
                 _tmp[6] |= 0xF0;
@@ -321,91 +224,166 @@ namespace Honoo
             }
             if (result >= 1d)
             {
-                result -= 1d;
+                result -= (int)result;
             }
-            _hash = _hashAlgorithm.ComputeHash(_hash);
+            if (_hashIndex >= _hash.Length)
+            {
+                _hash = _hashAlgorithm.ComputeHash(_hash);
+                _hashIndex = 0;
+            }
             return result;
+        }
+
+        /// <summary>
+        /// 用加强型随机非零值序列填充字节数组。
+        /// </summary>
+        /// <param name="buffer">要填充的字节数组。</param>
+        public void NextNonZeroBytes(byte[] buffer)
+        {
+            NextNonZeroBytes(buffer, 0, buffer.Length);
+        }
+
+        /// <summary>
+        /// 用加强型随机非零值序列填充字节数组。
+        /// </summary>
+        /// <param name="buffer">要填充的字节数组。</param>
+        /// <param name="offset">从 <paramref name="buffer"/> 的指定偏移处开始填充。</param>
+        /// <param name="length">要填充的长度。</param>
+        public void NextNonZeroBytes(byte[] buffer, int offset, int length)
+        {
+            while (length > 0)
+            {
+                while (length > 0 && _hashIndex < _hash.Length)
+                {
+                    if (_hash[_hashIndex] != 0)
+                    {
+                        buffer[offset] = _hash[_hashIndex];
+                        offset++;
+                        length--;
+                    }
+                    _hashIndex++;
+                }
+                if (_hashIndex >= _hash.Length)
+                {
+                    _hash = _hashAlgorithm.ComputeHash(_hash);
+                    _hashIndex = 0;
+                }
+            }
         }
 
         #region 随机字符串
 
         /// <summary>
         /// 返回一个指定字符范围的随机字符串。
-        /// <para/>返回结果：指定字符范围的随机字符串。
         /// <para/>字符范围标记：
-        /// <para/>'d' 阿拉伯数字，不包括字形易混淆的字符。
-        /// <para/>'D' 阿拉伯数字。
-        /// <para/>'a' 大写和小写英文字母，不包括字形易混淆的字符。
-        /// <para/>'A' 大写和小写英文字母。
-        /// <para/>'m' 大写和小写英文字母和阿拉伯数字，不包括字形易混淆的字符。
-        /// <para/>'M' 大写和小写英文字母和阿拉伯数字。
-        /// <para/>'h' 小写十六进制字符。
+        /// <br/>'d' 阿拉伯数字，不包括字形易混淆的字符。
+        /// <br/>'D' 阿拉伯数字。
+        /// <br/>'1' 阿拉伯数字，不包括字形易混淆的字符。'd' 的别名。
+        /// <br/>'0' 阿拉伯数字。'D' 的别名。
+        /// <br/>'a' 大写和小写英文字母，不包括字形易混淆的字符。
+        /// <br/>'A' 大写和小写英文字母。
+        /// <br/>'m' 大写和小写英文字母和阿拉伯数字，不包括字形易混淆的字符。
+        /// <br/>'M' 大写和小写英文字母和阿拉伯数字。
+        /// <br/>'h' 小写十六进制字符。
         /// </summary>
-        /// <param name="token"></param>
-        /// <param name="count"></param>
+        /// <param name="count">要生成的字符个数。</param>
+        /// <param name="token">字符范围标记。</param>
         /// <returns></returns>
-        public string NextString(char token, int count)
+        public string NextString(int count, char token)
         {
+            char[] source;
             IList<int> positions;
-            char[] chars;
             switch (token)
             {
-                case 'd': positions = Next(count, 0, _digitalLess.Length); chars = _digitalLess; break;
-                case 'D': positions = Next(count, 0, _digital.Length); chars = _digital; break;
-                case 'a': positions = Next(count, 0, _alphabetLess.Length); chars = _alphabetLess; break;
-                case 'A': positions = Next(count, 0, _alphabet.Length); chars = _alphabet; break;
-                case 'm': positions = Next(count, 0, _mixtureLess.Length); chars = _mixtureLess; break;
-                case 'M': positions = Next(count, 0, _mixture.Length); chars = _mixture; break;
-                case 'h': positions = Next(count, 0, _hex.Length); chars = _hex; break;
-                default: positions = null; chars = null; break;
+                case 'd': case '1': positions = Next(count, 0, _digitalLess.Length); source = _digitalLess; break;
+                case 'D': case '0': positions = Next(count, 0, _digital.Length); source = _digital; break;
+                case 'a': positions = Next(count, 0, _alphabetLess.Length); source = _alphabetLess; break;
+                case 'A': positions = Next(count, 0, _alphabet.Length); source = _alphabet; break;
+                case 'm': positions = Next(count, 0, _mixtureLess.Length); source = _mixtureLess; break;
+                case 'M': positions = Next(count, 0, _mixture.Length); source = _mixture; break;
+                case 'h': positions = Next(count, 0, _hex.Length); source = _hex; break;
+                default: positions = null; source = null; break;
             }
-            if (positions is null || chars is null)
+            if (source is null)
             {
-                return string.Empty;
+                throw new ArgumentException($"The token invalid.");
             }
             else
             {
                 StringBuilder result = new StringBuilder();
                 foreach (int position in positions)
                 {
-                    result.Append(chars[position]);
+                    result.Append(source[position]);
                 }
                 return result.ToString();
             }
         }
 
         /// <summary>
-        /// 返回一个指定字符范围的随机字符串。
-        /// <para/>返回结果：指定字符范围的随机字符串。
-        /// <para/>字符掩码标记：
-        /// <para/>'d' 阿拉伯数字，不包括字形易混淆的字符。
-        /// <para/>'D' 阿拉伯数字。
-        /// <para/>'a' 大写和小写英文字母，不包括字形易混淆的字符。
-        /// <para/>'A' 大写和小写英文字母。
-        /// <para/>'m' 大写和小写英文字母和阿拉伯数字，不包括字形易混淆的字符。
-        /// <para/>'M' 大写和小写英文字母和阿拉伯数字。
-        /// <para/>'h' 小写十六进制字符。
-        /// <para/>'c' 使用自定义字符。需配合 '@' 指示符同时使用。
-        /// <para/>'@' 指示符之后的字符作为自定义字符。需配合 'c' 指示符同时使用。
-        /// <para/>'+' 指示符之后的随机字符转换为大写形式。不影响直接输出指示符 '(...)'。
-        /// <para/>'-' 指示符之后的随机字符转换为小写形式。不影响直接输出指示符 '(...)'。
-        /// <para/>'.' 指示符之后的随机字符不再进行大小写转换。
-        /// <para/>'(...)' 指示符之内的字符直接输出，不作为掩码字符。
-        /// <para/>'(..!)..)' '!'后一个字符直接输出，主要用于后括号 ')' 输出。
-        /// <para/>'[number]' 指示符之内的数字表示输出前一随机字符的个数。
-        /// <para/>实例：
-        /// <para/>+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm 模拟 Windows 序列号。
-        /// <para/>h[8](-)h[4](-)h[4](-)h[4](-)h[12] 模拟 GUID。
-        /// <para/>(WPD888-5)DDDD(-)DDDDD(-)DDDDD 模拟 Macromedia 8 序列号。
-        /// <para/>(AAA)cccccc(---)c[12]@ABCabc12345~!@#$%^* 自定义字符。
+        /// 返回一个由自定义字符组成的随机字符串。
         /// </summary>
-        /// <param name="mark"></param>
+        /// <param name="count">要生成的字符个数。</param>
+        /// <param name="customSource">自定义字符集合。</param>
+        /// <returns></returns>
+        public string NextString(int count, string customSource)
+        {
+            if (string.IsNullOrEmpty(customSource))
+            {
+                throw new ArgumentException($"The customSource invalid.");
+            }
+            char[] source = customSource.ToCharArray();
+            IList<int> positions = Next(count, 0, _digitalLess.Length);
+            StringBuilder result = new StringBuilder();
+            foreach (int position in positions)
+            {
+                result.Append(source[position]);
+            }
+            return result.ToString();
+        }
+
+        /// <summary>
+        /// 返回一个指定字符范围的随机字符串。
+        /// <para/>字符范围标记和控制符：
+        /// <br/>'d' 阿拉伯数字，不包括字形易混淆的字符。
+        /// <br/>'D' 阿拉伯数字。
+        /// <br/>'1' 阿拉伯数字，不包括字形易混淆的字符。'd' 的别名。
+        /// <br/>'0' 阿拉伯数字。'D' 的别名。
+        /// <br/>'a' 大写和小写英文字母，不包括字形易混淆的字符。
+        /// <br/>'A' 大写和小写英文字母。
+        /// <br/>'m' 大写和小写英文字母和阿拉伯数字，不包括字形易混淆的字符。
+        /// <br/>'M' 大写和小写英文字母和阿拉伯数字。
+        /// <br/>'h' 小写十六进制字符。
+        /// <br/>'c' 使用自定义字符集合。需配合 '@' 控制符同时使用。
+        /// <br/>'@' 控制符之后的字符作为自定义字符。需配合 'c' 控制符同时使用。
+        /// <br/>'+' 控制符之后的随机字符转换为大写形式。不影响直接输出控制符 '(...)'。
+        /// <br/>'-' 控制符之后的随机字符转换为小写形式。不影响直接输出控制符 '(...)'。
+        /// <br/>'.' 控制符之后的随机字符不再进行大小写转换。
+        /// <br/>'(...)' 控制符之内的字符直接输出，不作为掩码字符。
+        /// <br/>'(..!)..)' '!'后一个字符直接输出，主要用于后括号 ')' 输出。
+        /// <br/>'[number]' 控制符之内的数字表示输出前一随机字符的个数。
+        /// <para/>实例：
+        /// <br/>+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm 模拟 Windows 序列号。
+        /// <br/>h[8](-)h[4](-)h[4](-)h[4](-)h[12] 模拟 GUID。
+        /// <br/>(WPD888-5)DDDD(-)DDDDD(-)DDDDD 模拟 Macromedia 8 序列号。
+        /// <br/>ccccccccccccccccccccccccc@ABCabc12345~!@#$%^* 自定义字符。
+        /// </summary>
+        /// <param name="mark">由字符范围标记和控制符组成的掩码字符串。</param>
         /// <returns></returns>
         public string NextString(string mark)
         {
             if (_rooms is null)
             {
-                InitRooms();
+                _rooms = new Dictionary<char, Room>
+                {
+                    { 'd', new Room( _digitalLess) },
+                    { 'D', new Room( _digital) },
+                    { 'a', new Room( _alphabetLess) },
+                    { 'A', new Room( _alphabet) },
+                    { 'm', new Room( _mixtureLess) },
+                    { 'M', new Room( _mixture) },
+                    { 'h', new Room( _hex) },
+                    { 'c', new Room() }
+                };
             }
             else
             {
@@ -425,7 +403,7 @@ namespace Honoo
             {
                 offset = mark.Length;
             }
-            _rooms['c'].Source = customs;
+            _rooms['c'].ReplaceSource(customs);
             char[] marks = mark.ToCharArray(0, offset);
             //
             List<char> tags = new List<char>();
@@ -433,6 +411,7 @@ namespace Honoo
             bool direct = false;
             bool directOne = false;
             char sen = '.';
+            bool senChanged = false;
             char cRepeat = '*';
             bool repeat = false;
             StringBuilder number = new StringBuilder();
@@ -468,7 +447,7 @@ namespace Honoo
                     {
                         case ']':
                             int count = int.Parse(number.ToString());
-                            _rooms[cRepeat].Count += count;
+                            _rooms[cRepeat].Increment(count);
                             for (int i = 0; i < count; i++)
                             {
                                 tags.Add(cRepeat);
@@ -485,6 +464,8 @@ namespace Honoo
                 {
                     switch (c)
                     {
+                        case '1': cRepeat = 'd'; tags.Add('d'); sens.Add(sen); _rooms['d'].Increment(1); break;
+                        case '0': cRepeat = 'D'; tags.Add('D'); sens.Add(sen); _rooms['D'].Increment(1); break;
                         case 'd':
                         case 'D':
                         case 'a':
@@ -492,9 +473,9 @@ namespace Honoo
                         case 'm':
                         case 'M':
                         case 'h':
-                        case 'c': cRepeat = c; tags.Add(c); sens.Add(sen); _rooms[c].Count += 1; break;
-                        case '+': sen = '+'; break;
-                        case '-': sen = '-'; break;
+                        case 'c': cRepeat = c; tags.Add(c); sens.Add(sen); _rooms[c].Increment(1); break;
+                        case '+': sen = '+'; senChanged = true; break;
+                        case '-': sen = '-'; senChanged = true; break;
                         case '.': sen = '.'; break;
                         case '(': direct = true; break;
                         case '!': directOne = true; break;
@@ -505,7 +486,7 @@ namespace Honoo
             }
             foreach (KeyValuePair<char, Room> room in _rooms)
             {
-                room.Value.GenerateRand();
+                room.Value.GenerateRand(this);
             }
             char[] chars = sens.ToArray();
             for (int i = 0; i < tags.Count; i++)
@@ -513,94 +494,102 @@ namespace Honoo
                 if (tags[i] != '!')
                 {
                     Room room = _rooms[tags[i]];
-                    chars[i] = room.Rand[room.Index];
-                    room.Index++;
+                    chars[i] = room.Pick();
                 }
             }
-            string upp = new string(chars);
-            upp = upp.ToUpperInvariant();
-            string low = upp.ToLowerInvariant();
-            for (int i = 0; i < sens.Count; i++)
+            if (senChanged)
             {
-                if (sens[i] == '+')
+                string upp = new string(chars);
+                upp = upp.ToUpperInvariant();
+                string low = upp.ToLowerInvariant();
+                for (int i = 0; i < sens.Count; i++)
                 {
-                    chars[i] = upp[i];
-                }
-                else if (sens[i] == '-')
-                {
-                    chars[i] = low[i];
+                    if (sens[i] == '+')
+                    {
+                        chars[i] = upp[i];
+                    }
+                    else if (sens[i] == '-')
+                    {
+                        chars[i] = low[i];
+                    }
                 }
             }
             return new string(chars);
         }
 
-        private void InitRooms()
+        private IList<int> Next(int count, int minValue, int maxValue)
         {
-            _rooms = new Dictionary<char, Room>
+            List<int> result = new List<int>(count);
+            for (int i = 0; i < count; i++)
             {
-                { 'd', new Room(this, _digitalLess) },
-                { 'D', new Room(this, _digital) },
-                { 'a', new Room(this, _alphabetLess) },
-                { 'A', new Room(this, _alphabet) },
-                { 'm', new Room(this, _mixtureLess) },
-                { 'M', new Room(this, _mixture) },
-                { 'h', new Room(this, _hex) },
-                { 'c', new Room(this) }
-            };
+                result.Add(Next(minValue, maxValue));
+            }
+            return result;
         }
 
         private sealed class Room
         {
-            private readonly Randoom _randoom;
+            private int _count;
+            private int _index;
+            private char[] _rand;
+            private char[] _source;
 
-            internal Room(Randoom randoom) : this(randoom, null)
+            internal Room() : this(null)
             {
             }
 
-            internal Room(Randoom randoom, char[] source)
+            internal Room(char[] source)
             {
-                _randoom = randoom;
-                Source = source;
+                _source = source;
             }
 
-            internal int Count { get; set; }
-
-            internal int Index { get; set; }
-
-            internal char[] Rand { get; set; }
-
-            internal char[] Source { get; set; }
-
-            internal void GenerateRand()
+            internal void GenerateRand(Randoom randoom)
             {
-                if (Count > 0)
+                if (_count > 0)
                 {
-                    if (Source is null)
+                    if (_source is null)
                     {
-                        Rand = new char[Count];
-                        for (int i = 0; i < Rand.Length; i++)
+                        _rand = new char[_count];
+                        for (int i = 0; i < _rand.Length; i++)
                         {
-                            Rand[i] = 'c';
+                            _rand[i] = 'c';
                         }
                     }
                     else
                     {
-                        IList<int> positions = _randoom.Next(Count, 0, Source.Length);
+                        IList<int> positions = randoom.Next(_count, 0, _source.Length);
                         List<char> chars = new List<char>();
                         foreach (int position in positions)
                         {
-                            chars.Add(Source[position]);
+                            chars.Add(_source[position]);
                         }
-                        Rand = chars.ToArray();
+                        _rand = chars.ToArray();
                     }
                 }
             }
 
+            internal void Increment(int count)
+            {
+                _count += count;
+            }
+
+            internal char Pick()
+            {
+                char result = _rand[_index];
+                _index++;
+                return result;
+            }
+
+            internal void ReplaceSource(char[] source)
+            {
+                _source = source;
+            }
+
             internal void Reset()
             {
-                Count = 0;
-                Rand = null;
-                Index = 0;
+                _count = 0;
+                _rand = null;
+                _index = 0;
             }
         }
 

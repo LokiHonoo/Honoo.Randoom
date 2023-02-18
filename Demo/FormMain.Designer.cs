@@ -28,225 +28,214 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.ComboBoxToken = new System.Windows.Forms.ComboBox();
-            this.ListViewResult = new System.Windows.Forms.ListView();
-            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.NumericUpDownCharCount = new System.Windows.Forms.NumericUpDown();
-            this.ButtonGenerate = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.ButtonMarkDescription = new System.Windows.Forms.Button();
-            this.ComboBoxMark = new System.Windows.Forms.ComboBox();
-            this.RadioButtonGeneral = new System.Windows.Forms.RadioButton();
-            this.RadioButtonMark = new System.Windows.Forms.RadioButton();
-            this.NumericUpDownGenerateCount = new System.Windows.Forms.NumericUpDown();
-            this.label4 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.NumericUpDownCharCount)).BeginInit();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.NumericUpDownGenerateCount)).BeginInit();
-            this.SuspendLayout();
+            ComboBoxToken = new ComboBox();
+            ListViewResult = new ListView();
+            columnHeader1 = new ColumnHeader();
+            columnHeader2 = new ColumnHeader();
+            label1 = new Label();
+            label2 = new Label();
+            NumericUpDownCharCount = new NumericUpDown();
+            ButtonGenerate = new Button();
+            label3 = new Label();
+            groupBox1 = new GroupBox();
+            groupBox2 = new GroupBox();
+            ButtonMarkDescription = new Button();
+            ComboBoxMark = new ComboBox();
+            RadioButtonGeneral = new RadioButton();
+            RadioButtonMark = new RadioButton();
+            NumericUpDownGenerateCount = new NumericUpDown();
+            label4 = new Label();
+            ((System.ComponentModel.ISupportInitialize)NumericUpDownCharCount).BeginInit();
+            groupBox1.SuspendLayout();
+            groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)NumericUpDownGenerateCount).BeginInit();
+            SuspendLayout();
             // 
             // ComboBoxToken
             // 
-            this.ComboBoxToken.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ComboBoxToken.FormattingEnabled = true;
-            this.ComboBoxToken.Location = new System.Drawing.Point(84, 22);
-            this.ComboBoxToken.Name = "ComboBoxToken";
-            this.ComboBoxToken.Size = new System.Drawing.Size(250, 25);
-            this.ComboBoxToken.TabIndex = 0;
+            ComboBoxToken.DropDownStyle = ComboBoxStyle.DropDownList;
+            ComboBoxToken.FormattingEnabled = true;
+            ComboBoxToken.Location = new Point(84, 22);
+            ComboBoxToken.Name = "ComboBoxToken";
+            ComboBoxToken.Size = new Size(250, 25);
+            ComboBoxToken.TabIndex = 0;
             // 
             // ListViewResult
             // 
-            this.ListViewResult.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2});
-            this.ListViewResult.FullRowSelect = true;
-            this.ListViewResult.GridLines = true;
-            this.ListViewResult.Location = new System.Drawing.Point(12, 293);
-            this.ListViewResult.Name = "ListViewResult";
-            this.ListViewResult.Size = new System.Drawing.Size(467, 210);
-            this.ListViewResult.TabIndex = 1;
-            this.ListViewResult.UseCompatibleStateImageBehavior = false;
-            this.ListViewResult.View = System.Windows.Forms.View.Details;
-            this.ListViewResult.ItemActivate += new System.EventHandler(this.ListViewResult_ItemActivate);
+            ListViewResult.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
+            ListViewResult.FullRowSelect = true;
+            ListViewResult.GridLines = true;
+            ListViewResult.Location = new Point(12, 293);
+            ListViewResult.Name = "ListViewResult";
+            ListViewResult.Size = new Size(467, 210);
+            ListViewResult.TabIndex = 1;
+            ListViewResult.UseCompatibleStateImageBehavior = false;
+            ListViewResult.View = View.Details;
+            ListViewResult.ItemActivate += ListViewResult_ItemActivate;
             // 
             // columnHeader1
             // 
-            this.columnHeader1.Text = "序号";
-            this.columnHeader1.Width = 50;
+            columnHeader1.Text = "序号";
+            columnHeader1.Width = 50;
             // 
             // columnHeader2
             // 
-            this.columnHeader2.Text = "随机字符串 (双击复制)";
-            this.columnHeader2.Width = 380;
+            columnHeader2.Text = "随机字符串 (双击复制)";
+            columnHeader2.Width = 380;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(22, 26);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(56, 17);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "字符范围";
+            label1.AutoSize = true;
+            label1.Location = new Point(22, 26);
+            label1.Name = "label1";
+            label1.Size = new Size(56, 17);
+            label1.TabIndex = 2;
+            label1.Text = "字符范围";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(340, 26);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 17);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "字符个数";
+            label2.AutoSize = true;
+            label2.Location = new Point(340, 26);
+            label2.Name = "label2";
+            label2.Size = new Size(56, 17);
+            label2.TabIndex = 3;
+            label2.Text = "字符个数";
             // 
             // NumericUpDownCharCount
             // 
-            this.NumericUpDownCharCount.Location = new System.Drawing.Point(402, 23);
-            this.NumericUpDownCharCount.Name = "NumericUpDownCharCount";
-            this.NumericUpDownCharCount.Size = new System.Drawing.Size(59, 23);
-            this.NumericUpDownCharCount.TabIndex = 4;
-            this.NumericUpDownCharCount.Value = new decimal(new int[] {
-            16,
-            0,
-            0,
-            0});
+            NumericUpDownCharCount.Location = new Point(402, 23);
+            NumericUpDownCharCount.Name = "NumericUpDownCharCount";
+            NumericUpDownCharCount.Size = new Size(59, 23);
+            NumericUpDownCharCount.TabIndex = 4;
+            NumericUpDownCharCount.Value = new decimal(new int[] { 16, 0, 0, 0 });
             // 
             // ButtonGenerate
             // 
-            this.ButtonGenerate.Location = new System.Drawing.Point(193, 242);
-            this.ButtonGenerate.Name = "ButtonGenerate";
-            this.ButtonGenerate.Size = new System.Drawing.Size(101, 45);
-            this.ButtonGenerate.TabIndex = 5;
-            this.ButtonGenerate.Text = "生 成";
-            this.ButtonGenerate.UseVisualStyleBackColor = true;
-            this.ButtonGenerate.Click += new System.EventHandler(this.ButtonGenerate_Click);
+            ButtonGenerate.Location = new Point(193, 242);
+            ButtonGenerate.Name = "ButtonGenerate";
+            ButtonGenerate.Size = new Size(101, 45);
+            ButtonGenerate.TabIndex = 5;
+            ButtonGenerate.Text = "生 成";
+            ButtonGenerate.UseVisualStyleBackColor = true;
+            ButtonGenerate.Click += ButtonGenerate_Click;
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(22, 64);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(32, 17);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "掩码";
+            label3.AutoSize = true;
+            label3.Location = new Point(22, 64);
+            label3.Name = "label3";
+            label3.Size = new Size(32, 17);
+            label3.TabIndex = 6;
+            label3.Text = "掩码";
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.NumericUpDownCharCount);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.ComboBoxToken);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(12, 39);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(467, 66);
-            this.groupBox1.TabIndex = 8;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "设置";
+            groupBox1.Controls.Add(NumericUpDownCharCount);
+            groupBox1.Controls.Add(label2);
+            groupBox1.Controls.Add(ComboBoxToken);
+            groupBox1.Controls.Add(label1);
+            groupBox1.Location = new Point(12, 39);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(467, 66);
+            groupBox1.TabIndex = 8;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "设置";
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.ButtonMarkDescription);
-            this.groupBox2.Controls.Add(this.ComboBoxMark);
-            this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Location = new System.Drawing.Point(12, 138);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(467, 98);
-            this.groupBox2.TabIndex = 9;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "设置";
+            groupBox2.Controls.Add(ButtonMarkDescription);
+            groupBox2.Controls.Add(ComboBoxMark);
+            groupBox2.Controls.Add(label3);
+            groupBox2.Location = new Point(12, 138);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(467, 98);
+            groupBox2.TabIndex = 9;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "设置";
             // 
             // ButtonMarkDescription
             // 
-            this.ButtonMarkDescription.Location = new System.Drawing.Point(6, 22);
-            this.ButtonMarkDescription.Name = "ButtonMarkDescription";
-            this.ButtonMarkDescription.Size = new System.Drawing.Size(97, 32);
-            this.ButtonMarkDescription.TabIndex = 8;
-            this.ButtonMarkDescription.Text = "掩码说明";
-            this.ButtonMarkDescription.UseVisualStyleBackColor = true;
-            this.ButtonMarkDescription.Click += new System.EventHandler(this.ButtonMarkDescription_Click);
+            ButtonMarkDescription.Location = new Point(6, 22);
+            ButtonMarkDescription.Name = "ButtonMarkDescription";
+            ButtonMarkDescription.Size = new Size(97, 32);
+            ButtonMarkDescription.TabIndex = 8;
+            ButtonMarkDescription.Text = "掩码说明";
+            ButtonMarkDescription.UseVisualStyleBackColor = true;
+            ButtonMarkDescription.Click += ButtonMarkDescription_Click;
             // 
             // ComboBoxMark
             // 
-            this.ComboBoxMark.FormattingEnabled = true;
-            this.ComboBoxMark.Location = new System.Drawing.Point(60, 60);
-            this.ComboBoxMark.Name = "ComboBoxMark";
-            this.ComboBoxMark.Size = new System.Drawing.Size(401, 25);
-            this.ComboBoxMark.TabIndex = 7;
+            ComboBoxMark.FormattingEnabled = true;
+            ComboBoxMark.Location = new Point(60, 60);
+            ComboBoxMark.Name = "ComboBoxMark";
+            ComboBoxMark.Size = new Size(401, 25);
+            ComboBoxMark.TabIndex = 7;
             // 
             // RadioButtonGeneral
             // 
-            this.RadioButtonGeneral.AutoSize = true;
-            this.RadioButtonGeneral.Checked = true;
-            this.RadioButtonGeneral.Location = new System.Drawing.Point(12, 12);
-            this.RadioButtonGeneral.Name = "RadioButtonGeneral";
-            this.RadioButtonGeneral.Size = new System.Drawing.Size(50, 21);
-            this.RadioButtonGeneral.TabIndex = 10;
-            this.RadioButtonGeneral.TabStop = true;
-            this.RadioButtonGeneral.Text = "常规";
-            this.RadioButtonGeneral.UseVisualStyleBackColor = true;
+            RadioButtonGeneral.AutoSize = true;
+            RadioButtonGeneral.Checked = true;
+            RadioButtonGeneral.Location = new Point(12, 12);
+            RadioButtonGeneral.Name = "RadioButtonGeneral";
+            RadioButtonGeneral.Size = new Size(50, 21);
+            RadioButtonGeneral.TabIndex = 10;
+            RadioButtonGeneral.TabStop = true;
+            RadioButtonGeneral.Text = "常规";
+            RadioButtonGeneral.UseVisualStyleBackColor = true;
             // 
             // RadioButtonMark
             // 
-            this.RadioButtonMark.AutoSize = true;
-            this.RadioButtonMark.Location = new System.Drawing.Point(12, 111);
-            this.RadioButtonMark.Name = "RadioButtonMark";
-            this.RadioButtonMark.Size = new System.Drawing.Size(50, 21);
-            this.RadioButtonMark.TabIndex = 11;
-            this.RadioButtonMark.Text = "掩码";
-            this.RadioButtonMark.UseVisualStyleBackColor = true;
+            RadioButtonMark.AutoSize = true;
+            RadioButtonMark.Location = new Point(12, 111);
+            RadioButtonMark.Name = "RadioButtonMark";
+            RadioButtonMark.Size = new Size(50, 21);
+            RadioButtonMark.TabIndex = 11;
+            RadioButtonMark.Text = "掩码";
+            RadioButtonMark.UseVisualStyleBackColor = true;
             // 
             // NumericUpDownGenerateCount
             // 
-            this.NumericUpDownGenerateCount.Location = new System.Drawing.Point(343, 253);
-            this.NumericUpDownGenerateCount.Name = "NumericUpDownGenerateCount";
-            this.NumericUpDownGenerateCount.Size = new System.Drawing.Size(74, 23);
-            this.NumericUpDownGenerateCount.TabIndex = 12;
-            this.NumericUpDownGenerateCount.Value = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
+            NumericUpDownGenerateCount.Location = new Point(343, 253);
+            NumericUpDownGenerateCount.Name = "NumericUpDownGenerateCount";
+            NumericUpDownGenerateCount.Size = new Size(74, 23);
+            NumericUpDownGenerateCount.TabIndex = 12;
+            NumericUpDownGenerateCount.Value = new decimal(new int[] { 8, 0, 0, 0 });
             // 
             // label4
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(305, 256);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(32, 17);
-            this.label4.TabIndex = 13;
-            this.label4.Text = "数量";
+            label4.AutoSize = true;
+            label4.Location = new Point(305, 256);
+            label4.Name = "label4";
+            label4.Size = new Size(32, 17);
+            label4.TabIndex = 13;
+            label4.Text = "数量";
             // 
             // FormMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(491, 515);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.NumericUpDownGenerateCount);
-            this.Controls.Add(this.RadioButtonMark);
-            this.Controls.Add(this.RadioButtonGeneral);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.ButtonGenerate);
-            this.Controls.Add(this.ListViewResult);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-            this.Name = "FormMain";
-            this.Text = "Honoo.Randoom DEMO";
-            this.Load += new System.EventHandler(this.FormMain_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.NumericUpDownCharCount)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.NumericUpDownGenerateCount)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(491, 515);
+            Controls.Add(label4);
+            Controls.Add(NumericUpDownGenerateCount);
+            Controls.Add(RadioButtonMark);
+            Controls.Add(RadioButtonGeneral);
+            Controls.Add(groupBox2);
+            Controls.Add(groupBox1);
+            Controls.Add(ButtonGenerate);
+            Controls.Add(ListViewResult);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
+            Name = "FormMain";
+            Text = "Honoo.Randoom DEMO";
+            Load += FormMain_Load;
+            ((System.ComponentModel.ISupportInitialize)NumericUpDownCharCount).EndInit();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)NumericUpDownGenerateCount).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
