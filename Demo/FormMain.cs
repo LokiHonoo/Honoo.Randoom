@@ -53,8 +53,6 @@ namespace Demo
         private void ButtonMarkDescription_Click(object sender, EventArgs e)
         {
             var description = new StringBuilder();
-            description.AppendLine("返回一个指定字符范围的随机字符串。");
-            description.AppendLine();
             description.AppendLine("字符范围标记和控制符：");
             description.AppendLine("'d' 阿拉伯数字，不包括字形易混淆的字符。");
             description.AppendLine("'D' 阿拉伯数字。");
@@ -66,7 +64,7 @@ namespace Demo
             description.AppendLine("'M' 大写和小写英文字母和阿拉伯数字。");
             description.AppendLine("'h' 小写十六进制字符。");
             description.AppendLine("'c' 使用自定义字符集合。需配合 '@' 控制符同时使用。");
-            description.AppendLine("'@' 控制符之后的字符作为自定义字符。需配合 'c' 控制符同时使用。");
+            description.AppendLine("'@' 控制符之后的字符作为自定义字符。需配合 'c' 标记同时使用。");
             description.AppendLine("'+' 控制符之后的随机字符转换为大写形式。不影响直接输出控制符 '(...)'。");
             description.AppendLine("'-' 控制符之后的随机字符转换为小写形式。不影响直接输出控制符 '(...)'。");
             description.AppendLine("'.' 控制符之后的随机字符不再进行大小写转换。");

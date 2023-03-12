@@ -1,7 +1,6 @@
 ﻿using Honoo;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Security.Cryptography;
 
 namespace test
@@ -20,34 +19,40 @@ namespace test
                 Console.WriteLine("=======================================================================================");
 
                 var randoom = new Randoom(null, SHA256.Create());
-                Console.WriteLine("Randoom.NextDouble()");
+                Console.WriteLine("randoom.NextDouble()");
                 for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(randoom.NextDouble());
                 }
                 Console.WriteLine();
-                Console.WriteLine("Randoom.Next()");
+                Console.WriteLine("randoom.Next()");
                 for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(randoom.Next());
                 }
                 Console.WriteLine();
-                Console.WriteLine("Randoom.Next(90000)");
+                Console.WriteLine("randoom.Next(90000)");
                 for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(randoom.Next(90000));
                 }
                 Console.WriteLine();
-                Console.WriteLine("Randoom.Next(-30,30)");
+                Console.WriteLine("randoom.Next(-30, 30)");
                 for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(randoom.Next(-30, 30));
                 }
                 Console.WriteLine();
-                Console.WriteLine("Randoom.NextString('m',60)");
+                Console.WriteLine("randoom.NextString(60, 'm')");
                 for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(randoom.NextString(60, 'm'));
+                }
+                Console.WriteLine();
+                Console.WriteLine("randoom.NextString(60, \"!@#$%^&*()_~!@#$%^&*()^&*()_+\")");
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(randoom.NextString(60, "!@#$%^&*()_~!@#$%^&*()^&*()_+"));
                 }
                 Console.WriteLine();
                 Console.WriteLine("Randoom.NextString(\"+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm\")");

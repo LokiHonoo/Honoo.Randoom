@@ -332,7 +332,7 @@ namespace Honoo
                 throw new ArgumentException($"The customSource invalid.");
             }
             char[] source = customSource.ToCharArray();
-            IList<int> positions = Next(count, 0, _digitalLess.Length);
+            IList<int> positions = Next(count, 0, customSource.Length);
             StringBuilder result = new StringBuilder();
             foreach (int position in positions)
             {
@@ -342,7 +342,7 @@ namespace Honoo
         }
 
         /// <summary>
-        /// 返回一个指定字符范围的随机字符串。
+        /// 返回一个由掩码定义的随机字符串。
         /// <para/>字符范围标记和控制符：
         /// <br/>'d' 阿拉伯数字，不包括字形易混淆的字符。
         /// <br/>'D' 阿拉伯数字。
@@ -354,7 +354,7 @@ namespace Honoo
         /// <br/>'M' 大写和小写英文字母和阿拉伯数字。
         /// <br/>'h' 小写十六进制字符。
         /// <br/>'c' 使用自定义字符集合。需配合 '@' 控制符同时使用。
-        /// <br/>'@' 控制符之后的字符作为自定义字符。需配合 'c' 控制符同时使用。
+        /// <br/>'@' 控制符之后的字符作为自定义字符。需配合 'c' 标记同时使用。
         /// <br/>'+' 控制符之后的随机字符转换为大写形式。不影响直接输出控制符 '(...)'。
         /// <br/>'-' 控制符之后的随机字符转换为小写形式。不影响直接输出控制符 '(...)'。
         /// <br/>'.' 控制符之后的随机字符不再进行大小写转换。
@@ -447,6 +447,7 @@ namespace Honoo
                     {
                         case ']':
                             int count = int.Parse(number.ToString());
+                            count -= 1;
                             _rooms[cRepeat].Increment(count);
                             for (int i = 0; i < count; i++)
                             {
