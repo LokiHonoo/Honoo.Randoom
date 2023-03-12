@@ -1,4 +1,7 @@
-﻿namespace Demo
+﻿using System.Drawing;
+using System.Windows.Forms;
+
+namespace Demo
 {
     partial class FormMain
     {

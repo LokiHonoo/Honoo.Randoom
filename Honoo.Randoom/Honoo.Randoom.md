@@ -3,7 +3,7 @@
 - [Honoo.Randoom](#honoorandoom)
   - [INTRODUCTION](#introduction)
   - [GUIDE](#guide)
-    - [NuGet](#nuget)
+    - [GitHub](#github)
   - [LICENSE](#license)
 
 ## INTRODUCTION
@@ -12,9 +12,9 @@ Cross-platform secure random.
 
 ## GUIDE
 
-### NuGet
+### GitHub
 
-<https://www.nuget.org/packages/Honoo.Randoom/>
+<https://github.com/LokiHonoo/Honoo.Randoom/>
 
 ## LICENSE
 
