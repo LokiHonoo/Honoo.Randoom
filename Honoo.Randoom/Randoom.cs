@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -36,7 +37,7 @@ namespace Honoo
         private bool _disposed;
         private byte[] _hash;
         private HashAlgorithm _hashAlgorithm;
-        private int _hashIndex = 0;
+        private int _hashIndex;
         private IDictionary<char, Room> _rooms;
         private byte[] _tmp = new byte[8];
 
@@ -168,6 +169,10 @@ namespace Honoo
         /// <param name="buffer">要填充的字节数组。</param>
         public void NextBytes(byte[] buffer)
         {
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             NextBytes(buffer, 0, buffer.Length);
         }
 
@@ -240,6 +245,10 @@ namespace Honoo
         /// <param name="buffer">要填充的字节数组。</param>
         public void NextNonZeroBytes(byte[] buffer)
         {
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             NextNonZeroBytes(buffer, 0, buffer.Length);
         }
 
@@ -251,6 +260,10 @@ namespace Honoo
         /// <param name="length">要填充的长度。</param>
         public void NextNonZeroBytes(byte[] buffer, int offset, int length)
         {
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             while (length > 0)
             {
                 while (length > 0 && _hashIndex < _hash.Length)
@@ -369,8 +382,13 @@ namespace Honoo
         /// </summary>
         /// <param name="mark">由字符范围标记和控制符组成的掩码字符串。</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1308:将字符串规范化为大写", Justification = "<挂起>")]
         public string NextString(string mark)
         {
+            if (string.IsNullOrWhiteSpace(mark))
+            {
+                throw new ArgumentException($"\"{nameof(mark)}\" cannot be null or blank.", nameof(mark));
+            }
             if (_rooms is null)
             {
                 _rooms = new Dictionary<char, Room>
@@ -446,7 +464,7 @@ namespace Honoo
                     switch (c)
                     {
                         case ']':
-                            int count = int.Parse(number.ToString());
+                            int count = int.Parse(number.ToString(), CultureInfo.InvariantCulture);
                             count -= 1;
                             _rooms[cRepeat].Increment(count);
                             for (int i = 0; i < count; i++)
@@ -518,7 +536,7 @@ namespace Honoo
             return new string(chars);
         }
 
-        private IList<int> Next(int count, int minValue, int maxValue)
+        private List<int> Next(int count, int minValue, int maxValue)
         {
             List<int> result = new List<int>(count);
             for (int i = 0; i < count; i++)
