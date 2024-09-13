@@ -38,7 +38,7 @@ namespace Honoo
         private byte[] _hash;
         private HashAlgorithm _hashAlgorithm;
         private int _hashIndex;
-        private IDictionary<char, Room> _rooms;
+        private Dictionary<char, Room> _rooms;
         private byte[] _tmp = new byte[8];
 
         #endregion 成员
@@ -48,7 +48,7 @@ namespace Honoo
         /// <summary>
         /// 创建 Randoom 的新实例。
         /// </summary>
-        public Randoom() : this(null, HashAlgorithm.Create("SHA1"))
+        public Randoom() : this(null, HashAlgorithm.Create("SHA256"))
         {
         }
 
@@ -56,7 +56,7 @@ namespace Honoo
         /// 创建 Randoom 的新实例。
         /// </summary>
         /// <param name="seed">额外的种子，通常采集终端用户的鼠标、按键等行为生成。</param>
-        public Randoom(byte[] seed) : this(seed, HashAlgorithm.Create("SHA1"))
+        public Randoom(byte[] seed) : this(seed, HashAlgorithm.Create("SHA256"))
         {
         }
 

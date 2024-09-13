@@ -1,23 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net40;net462;netstandard2.0</TargetFrameworks>
 	<RootNamespace>Honoo</RootNamespace>
 	<PackageId>Honoo.Randoom</PackageId>
 	<Product>Honoo.Randoom</Product>	  
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <SignAssembly>True</SignAssembly>
-	<Version>1.0.1</Version>
-	<Authors>Loki Honoo</Authors>
-	<Company>Loki Honoo</Company>
+	<Version>1.0.2</Version>
+	<Authors>LokiHonoo</Authors>
+	<Company>LokiHonoo</Company>
 	<Copyright>Copyright (C) Loki Honoo 2013. All rights reserved.</Copyright>
 	<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 	<PackageTags>Honoo Random Randoom</PackageTags>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<PackageProjectUrl>https://github.com/LokiHonoo/Honoo.Randoom</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/LokiHonoo/Honoo.Randoom</RepositoryUrl>
-	<Description>Cross-platform secure random.</Description>
+	<Description>Just a random.</Description>
 	<PackageReadmeFile>Honoo.Randoom.md</PackageReadmeFile>
 	<AnalysisLevel>latest-all</AnalysisLevel>
 	<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>

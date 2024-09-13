@@ -8,7 +8,7 @@
 
 ## INTRODUCTION
 
-Cross-platform secure random.
+Just a random.
 
 ## GUIDE
 
