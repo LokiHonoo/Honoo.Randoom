@@ -1,4 +1,5 @@
 using System;
+using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
 
@@ -6,7 +7,7 @@ namespace Demo
 {
     public partial class FormMain : Form
     {
-        private readonly Honoo.Randoom _randoom = new();
+        private Honoo.Randoom _randoom = new();
 
         public FormMain()
         {
@@ -66,13 +67,13 @@ namespace Demo
             description.AppendLine("'M' 大写和小写英文字母和阿拉伯数字。");
             description.AppendLine("'h' 小写十六进制字符。");
             description.AppendLine("'c' 使用自定义字符集合。需配合 '@' 控制符同时使用。");
+            description.AppendLine("'[number]' 控制符之内的数字表示输出前一随机字符的个数。");
             description.AppendLine("'@' 控制符之后的字符作为自定义字符。需配合 'c' 标记同时使用。");
+            description.AppendLine("'(...)' 控制符之内的字符直接输出，不作为掩码字符。");
+            description.AppendLine("'(..!)..)' '!'后一个字符直接输出，主要用于后括号 ')' 输出。");
             description.AppendLine("'+' 控制符之后的随机字符转换为大写形式。不影响直接输出控制符 '(...)'。");
             description.AppendLine("'-' 控制符之后的随机字符转换为小写形式。不影响直接输出控制符 '(...)'。");
             description.AppendLine("'.' 控制符之后的随机字符不再进行大小写转换。");
-            description.AppendLine("'(...)' 控制符之内的字符直接输出，不作为掩码字符。");
-            description.AppendLine("'(..!)..)' '!'后一个字符直接输出，主要用于后括号 ')' 输出。");
-            description.AppendLine("'[number]' 控制符之内的数字表示输出前一随机字符的个数。");
             description.AppendLine();
             description.AppendLine("实例：");
             description.AppendLine("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm 模拟 Windows 序列号。");
@@ -96,6 +97,19 @@ namespace Demo
             this.ComboBoxMark.Items.Add("h[8](-)h[4](-)h[4](-)h[4](-)h[12]");
             this.ComboBoxMark.Items.Add("(WPD888-5)DDDD(-)DDDDD(-)DDDDD");
             this.ComboBoxMark.Items.Add("ccccccccccccccccccccccccc@ABCabc12345~!@#$%^*");
+        }
+
+        private void FormMain_Shown(object sender, EventArgs e)
+        {
+            using FormAlgorithm dig = new();
+            if (dig.ShowDialog() == DialogResult.OK)
+            {
+                _randoom = new(dig.Seed.ToArray(), HashAlgorithm.Create(dig.Hash));
+            }
+            else
+            {
+                _randoom = new();
+            }
         }
 
         private void ListViewResult_ItemActivate(object sender, EventArgs e)

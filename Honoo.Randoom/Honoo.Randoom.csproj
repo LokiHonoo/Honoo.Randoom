@@ -18,6 +18,7 @@
 	<PackageProjectUrl>https://github.com/LokiHonoo/Honoo.Randoom</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/LokiHonoo/Honoo.Randoom</RepositoryUrl>
 	<Description>Cross-platform secure random.</Description>
+	<PackageReadmeFile>Honoo.Randoom.md</PackageReadmeFile>
 	<AnalysisLevel>latest-all</AnalysisLevel>
 	<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 	<AssemblyOriginatorKeyFile>Honoo.Randoom.snk</AssemblyOriginatorKeyFile>

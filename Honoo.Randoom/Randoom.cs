@@ -64,13 +64,13 @@ namespace Honoo
         /// 创建 Randoom 的新实例。
         /// </summary>
         /// <param name="seed">额外的种子，通常采集终端用户的鼠标、按键等行为生成。</param>
-        /// <param name="hashAlgorithm">用于随机数生成的 hash 算法实例。必须是 hash size 64 bits 以上的算法。</param>
+        /// <param name="hashAlgorithm">用于随机数生成的 hash 算法实例。必须是大于等于 64 bits 的算法。</param>
         public Randoom(byte[] seed, HashAlgorithm hashAlgorithm)
         {
             _hashAlgorithm = hashAlgorithm ?? throw new ArgumentNullException(nameof(hashAlgorithm));
             if (_hashAlgorithm.HashSize < 64)
             {
-                throw new CryptographicException("Hash algorithm's hash size must be more than 64 bits.");
+                throw new CryptographicException("Hash algorithm's hash size must be greater than or equal to 64 bits.");
             }
             byte[] guid = Guid.NewGuid().ToByteArray();
             byte[] buffer;
@@ -367,13 +367,13 @@ namespace Honoo
         /// <br/>'M' 大写和小写英文字母和阿拉伯数字。
         /// <br/>'h' 小写十六进制字符。
         /// <br/>'c' 使用自定义字符集合。需配合 '@' 控制符同时使用。
+        /// <br/>'[number]' 控制符之内的数字表示输出前一随机字符的个数。
         /// <br/>'@' 控制符之后的字符作为自定义字符。需配合 'c' 标记同时使用。
+        /// <br/>'(...)' 控制符之内的字符直接输出，不作为掩码字符。
+        /// <br/>'(..!)..)' '!'后一个字符直接输出，主要用于后括号 ')' 输出。
         /// <br/>'+' 控制符之后的随机字符转换为大写形式。不影响直接输出控制符 '(...)'。
         /// <br/>'-' 控制符之后的随机字符转换为小写形式。不影响直接输出控制符 '(...)'。
         /// <br/>'.' 控制符之后的随机字符不再进行大小写转换。
-        /// <br/>'(...)' 控制符之内的字符直接输出，不作为掩码字符。
-        /// <br/>'(..!)..)' '!'后一个字符直接输出，主要用于后括号 ')' 输出。
-        /// <br/>'[number]' 控制符之内的数字表示输出前一随机字符的个数。
         /// <para/>实例：
         /// <br/>+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm 模拟 Windows 序列号。
         /// <br/>h[8](-)h[4](-)h[4](-)h[4](-)h[12] 模拟 GUID。
@@ -411,17 +411,17 @@ namespace Honoo
                 }
             }
             //
-            char[] customs = null;
             int offset = mark.IndexOf('@');
             if (offset > 0)
             {
-                customs = mark.ToCharArray(offset + 1, mark.Length - offset - 1);
+                char[] customs = mark.ToCharArray(offset + 1, mark.Length - offset - 1);
+                _rooms['c'].ReplaceSource(customs);
             }
             else
             {
                 offset = mark.Length;
             }
-            _rooms['c'].ReplaceSource(customs);
+
             char[] marks = mark.ToCharArray(0, offset);
             //
             List<char> tags = new List<char>();

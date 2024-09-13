@@ -226,11 +226,11 @@ namespace Demo
             Controls.Add(groupBox1);
             Controls.Add(ButtonGenerate);
             Controls.Add(ListViewResult);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             Name = "FormMain";
             Text = "Honoo.Randoom DEMO";
             Load += FormMain_Load;
+            Shown += FormMain_Shown;
             ((System.ComponentModel.ISupportInitialize)NumericUpDownCharCount).EndInit();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
