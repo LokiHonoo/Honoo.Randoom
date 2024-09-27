@@ -42,10 +42,10 @@ namespace Demo
             label3 = new Label();
             groupBox1 = new GroupBox();
             groupBox2 = new GroupBox();
-            ButtonMarkDescription = new Button();
-            ComboBoxMark = new ComboBox();
+            ButtonMaskDescription = new Button();
+            ComboBoxMask = new ComboBox();
             RadioButtonGeneral = new RadioButton();
-            RadioButtonMark = new RadioButton();
+            RadioButtonMask = new RadioButton();
             NumericUpDownGenerateCount = new NumericUpDown();
             label4 = new Label();
             ((System.ComponentModel.ISupportInitialize)NumericUpDownCharCount).BeginInit();
@@ -146,8 +146,8 @@ namespace Demo
             // 
             // groupBox2
             // 
-            groupBox2.Controls.Add(ButtonMarkDescription);
-            groupBox2.Controls.Add(ComboBoxMark);
+            groupBox2.Controls.Add(ButtonMaskDescription);
+            groupBox2.Controls.Add(ComboBoxMask);
             groupBox2.Controls.Add(label3);
             groupBox2.Location = new Point(12, 138);
             groupBox2.Name = "groupBox2";
@@ -156,23 +156,23 @@ namespace Demo
             groupBox2.TabStop = false;
             groupBox2.Text = "设置";
             // 
-            // ButtonMarkDescription
+            // ButtonMaskDescription
             // 
-            ButtonMarkDescription.Location = new Point(6, 22);
-            ButtonMarkDescription.Name = "ButtonMarkDescription";
-            ButtonMarkDescription.Size = new Size(97, 32);
-            ButtonMarkDescription.TabIndex = 8;
-            ButtonMarkDescription.Text = "掩码说明";
-            ButtonMarkDescription.UseVisualStyleBackColor = true;
-            ButtonMarkDescription.Click += ButtonMarkDescription_Click;
+            ButtonMaskDescription.Location = new Point(6, 22);
+            ButtonMaskDescription.Name = "ButtonMaskDescription";
+            ButtonMaskDescription.Size = new Size(97, 32);
+            ButtonMaskDescription.TabIndex = 8;
+            ButtonMaskDescription.Text = "掩码说明";
+            ButtonMaskDescription.UseVisualStyleBackColor = true;
+            ButtonMaskDescription.Click += ButtonMaskDescription_Click;
             // 
-            // ComboBoxMark
+            // ComboBoxMask
             // 
-            ComboBoxMark.FormattingEnabled = true;
-            ComboBoxMark.Location = new Point(60, 60);
-            ComboBoxMark.Name = "ComboBoxMark";
-            ComboBoxMark.Size = new Size(401, 25);
-            ComboBoxMark.TabIndex = 7;
+            ComboBoxMask.FormattingEnabled = true;
+            ComboBoxMask.Location = new Point(60, 60);
+            ComboBoxMask.Name = "ComboBoxMask";
+            ComboBoxMask.Size = new Size(401, 25);
+            ComboBoxMask.TabIndex = 7;
             // 
             // RadioButtonGeneral
             // 
@@ -186,15 +186,15 @@ namespace Demo
             RadioButtonGeneral.Text = "常规";
             RadioButtonGeneral.UseVisualStyleBackColor = true;
             // 
-            // RadioButtonMark
+            // RadioButtonMask
             // 
-            RadioButtonMark.AutoSize = true;
-            RadioButtonMark.Location = new Point(12, 111);
-            RadioButtonMark.Name = "RadioButtonMark";
-            RadioButtonMark.Size = new Size(50, 21);
-            RadioButtonMark.TabIndex = 11;
-            RadioButtonMark.Text = "掩码";
-            RadioButtonMark.UseVisualStyleBackColor = true;
+            RadioButtonMask.AutoSize = true;
+            RadioButtonMask.Location = new Point(12, 111);
+            RadioButtonMask.Name = "RadioButtonMask";
+            RadioButtonMask.Size = new Size(50, 21);
+            RadioButtonMask.TabIndex = 11;
+            RadioButtonMask.Text = "掩码";
+            RadioButtonMask.UseVisualStyleBackColor = true;
             // 
             // NumericUpDownGenerateCount
             // 
@@ -220,7 +220,7 @@ namespace Demo
             ClientSize = new Size(491, 515);
             Controls.Add(label4);
             Controls.Add(NumericUpDownGenerateCount);
-            Controls.Add(RadioButtonMark);
+            Controls.Add(RadioButtonMask);
             Controls.Add(RadioButtonGeneral);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
@@ -255,10 +255,10 @@ namespace Demo
         private GroupBox groupBox1;
         private GroupBox groupBox2;
         private RadioButton RadioButtonGeneral;
-        private RadioButton RadioButtonMark;
+        private RadioButton RadioButtonMask;
         private NumericUpDown NumericUpDownGenerateCount;
         private Label label4;
-        private ComboBox ComboBoxMark;
-        private Button ButtonMarkDescription;
+        private ComboBox ComboBoxMask;
+        private Button ButtonMaskDescription;
     }
 }

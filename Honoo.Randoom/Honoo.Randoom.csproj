@@ -8,7 +8,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <SignAssembly>True</SignAssembly>
-	<Version>1.0.2</Version>
+	<Version>1.0.3</Version>
 	<Authors>Loki Honoo</Authors>
 	<Company>Loki Honoo</Company>
 	<Copyright>Copyright (C) Loki Honoo 2013. All rights reserved.</Copyright>
@@ -17,7 +17,12 @@
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<PackageProjectUrl>https://github.com/LokiHonoo/Honoo.Randoom</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/LokiHonoo/Honoo.Randoom</RepositoryUrl>
-	<Description>Just a random.</Description>
+	<Description>Just a random.
+
+randoom.Next();
+randoom.NextDouble();
+randoom.NextString(60, 'm');
+randoom.NextString("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm");</Description>
 	<PackageReadmeFile>Honoo.Randoom.md</PackageReadmeFile>
 	<AnalysisLevel>latest-all</AnalysisLevel>
 	<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>

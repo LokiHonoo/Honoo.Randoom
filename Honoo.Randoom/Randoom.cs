@@ -9,7 +9,7 @@ namespace Honoo
     /// <summary>
     /// 加强型随机值生成器。
     /// </summary>
-    public sealed class Randoom : IDisposable
+    public sealed class Randoom : Random, IDisposable
     {
         #region 成员
 
@@ -107,7 +107,7 @@ namespace Honoo
         /// <summary>
         /// 释放由 <see cref="Randoom"/> 使用的资源。
         /// </summary>
-        /// <param name="disposing">释放非托管资源。</param>
+        /// <param name="disposing"><see langword="true"/> 释放托管资源和非托管资源。<see langword="false"/> 仅释放非托管资源。</param>
         private void Dispose(bool disposing)
         {
             if (!_disposed)
@@ -130,7 +130,7 @@ namespace Honoo
         /// 返回一个非负随机整数。
         /// </summary>
         /// <returns></returns>
-        public int Next()
+        public override int Next()
         {
             return Next(0, int.MaxValue);
         }
@@ -140,7 +140,7 @@ namespace Honoo
         /// </summary>
         /// <param name="maxValue">返回的随机数的上界（随机数不可取该上界值）。</param>
         /// <returns></returns>
-        public int Next(int maxValue)
+        public override int Next(int maxValue)
         {
             return Next(0, maxValue);
         }
@@ -151,7 +151,7 @@ namespace Honoo
         /// <param name="minValue">返回的随机数的下界（随机数可取该下界值）。</param>
         /// <param name="maxValue">返回的随机数的上界（随机数不可取该上界值）。</param>
         /// <returns></returns>
-        public int Next(int minValue, int maxValue)
+        public override int Next(int minValue, int maxValue)
         {
             if (minValue > maxValue)
             {
@@ -167,7 +167,7 @@ namespace Honoo
         /// 用加强型随机值序列填充字节数组。
         /// </summary>
         /// <param name="buffer">要填充的字节数组。</param>
-        public void NextBytes(byte[] buffer)
+        public override void NextBytes(byte[] buffer)
         {
             if (buffer is null)
             {
@@ -203,7 +203,7 @@ namespace Honoo
         /// 返回一个大于或等于 0.0 且小于 1.0 的随机浮点数。
         /// </summary>
         /// <returns></returns>
-        public double NextDouble()
+        public override double NextDouble()
         {
             if (_hash.Length - _hashIndex < 8)
             {
@@ -289,15 +289,13 @@ namespace Honoo
         /// <summary>
         /// 返回一个指定字符范围的随机字符串。
         /// <para/>字符范围标记：
-        /// <br/>'d' 阿拉伯数字，不包括字形易混淆的字符。
-        /// <br/>'D' 阿拉伯数字。
-        /// <br/>'1' 阿拉伯数字，不包括字形易混淆的字符。'd' 的别名。
-        /// <br/>'0' 阿拉伯数字。'D' 的别名。
-        /// <br/>'a' 大写和小写英文字母，不包括字形易混淆的字符。
-        /// <br/>'A' 大写和小写英文字母。
-        /// <br/>'m' 大写和小写英文字母和阿拉伯数字，不包括字形易混淆的字符。
-        /// <br/>'M' 大写和小写英文字母和阿拉伯数字。
-        /// <br/>'h' 小写十六进制字符。
+        /// <br/><see langword="d"/> 或 <see langword="1"/> 阿拉伯数字，不包括字形易混淆的字符。
+        /// <br/><see langword="D"/> 或 <see langword="0"/> 阿拉伯数字。
+        /// <br/><see langword="a"/> 大写和小写英文字母，不包括字形易混淆的字符。
+        /// <br/><see langword="A"/> 大写和小写英文字母。
+        /// <br/><see langword="m"/> 大写和小写英文字母和阿拉伯数字，不包括字形易混淆的字符。
+        /// <br/><see langword="M"/> 大写和小写英文字母和阿拉伯数字。
+        /// <br/><see langword="h"/> 小写十六进制字符。
         /// </summary>
         /// <param name="count">要生成的字符个数。</param>
         /// <param name="token">字符范围标记。</param>
@@ -357,37 +355,35 @@ namespace Honoo
         /// <summary>
         /// 返回一个由掩码定义的随机字符串。
         /// <para/>字符范围标记和控制符：
-        /// <br/>'d' 阿拉伯数字，不包括字形易混淆的字符。
-        /// <br/>'D' 阿拉伯数字。
-        /// <br/>'1' 阿拉伯数字，不包括字形易混淆的字符。'd' 的别名。
-        /// <br/>'0' 阿拉伯数字。'D' 的别名。
-        /// <br/>'a' 大写和小写英文字母，不包括字形易混淆的字符。
-        /// <br/>'A' 大写和小写英文字母。
-        /// <br/>'m' 大写和小写英文字母和阿拉伯数字，不包括字形易混淆的字符。
-        /// <br/>'M' 大写和小写英文字母和阿拉伯数字。
-        /// <br/>'h' 小写十六进制字符。
-        /// <br/>'c' 使用自定义字符集合。需配合 '@' 控制符同时使用。
-        /// <br/>'[number]' 控制符之内的数字表示输出前一随机字符的个数。
-        /// <br/>'@' 控制符之后的字符作为自定义字符。需配合 'c' 标记同时使用。
-        /// <br/>'(...)' 控制符之内的字符直接输出，不作为掩码字符。
-        /// <br/>'(..!)..)' '!'后一个字符直接输出，主要用于后括号 ')' 输出。
-        /// <br/>'+' 控制符之后的随机字符转换为大写形式。不影响直接输出控制符 '(...)'。
-        /// <br/>'-' 控制符之后的随机字符转换为小写形式。不影响直接输出控制符 '(...)'。
-        /// <br/>'.' 控制符之后的随机字符不再进行大小写转换。
+        /// <br/><see langword="d"/> 或 <see langword="1"/> 阿拉伯数字，不包括字形易混淆的字符。
+        /// <br/><see langword="D"/> 或 <see langword="0"/> 阿拉伯数字。
+        /// <br/><see langword="a"/> 大写和小写英文字母，不包括字形易混淆的字符。
+        /// <br/><see langword="A"/> 大写和小写英文字母。
+        /// <br/><see langword="m"/> 大写和小写英文字母和阿拉伯数字，不包括字形易混淆的字符。
+        /// <br/><see langword="M"/> 大写和小写英文字母和阿拉伯数字。
+        /// <br/><see langword="h"/> 小写十六进制字符。
+        /// <br/><see langword="c"/> 使用自定义字符集合。需配合 '@' 控制符同时使用。
+        /// <br/><see langword="["/>number<see langword="]"/> 控制符之内的数字表示输出前一随机字符的个数。
+        /// <br/><see langword="@"/> 控制符之后的字符作为自定义字符。需配合 'c' 标记同时使用。
+        /// <br/><see langword="("/>xxx<see langword=")"/> 控制符之内的字符直接输出，不作为掩码字符。
+        /// <br/><see langword="!"/>x 后一个字符直接输出。在 <see langword="("/>xx<see langword="!"/>)xx<see langword=")"/> 中可用于输出后括号 ')'。
+        /// <br/><see langword="+"/> 控制符之后的随机字符转换为大写形式。不影响直接输出控制符 <see langword="("/>xxx<see langword=")"/>。
+        /// <br/><see langword="-"/> 控制符之后的随机字符转换为小写形式。不影响直接输出控制符 <see langword="("/>xxx<see langword=")"/>。
+        /// <br/><see langword="."/> 控制符之后的随机字符不再进行大小写转换。
         /// <para/>实例：
         /// <br/>+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm 模拟 Windows 序列号。
         /// <br/>h[8](-)h[4](-)h[4](-)h[4](-)h[12] 模拟 GUID。
         /// <br/>(WPD888-5)DDDD(-)DDDDD(-)DDDDD 模拟 Macromedia 8 序列号。
         /// <br/>ccccccccccccccccccccccccc@ABCabc12345~!@#$%^* 自定义字符。
         /// </summary>
-        /// <param name="mark">由字符范围标记和控制符组成的掩码字符串。</param>
+        /// <param name="mask">由字符范围标记和控制符组成的掩码字符串。</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1308:将字符串规范化为大写", Justification = "<挂起>")]
-        public string NextString(string mark)
+        public string NextString(string mask)
         {
-            if (string.IsNullOrWhiteSpace(mark))
+            if (string.IsNullOrWhiteSpace(mask))
             {
-                throw new ArgumentException($"\"{nameof(mark)}\" cannot be null or blank.", nameof(mark));
+                throw new ArgumentException($"\"{nameof(mask)}\" cannot be null or blank.", nameof(mask));
             }
             if (_rooms is null)
             {
@@ -411,18 +407,18 @@ namespace Honoo
                 }
             }
             //
-            int offset = mark.IndexOf('@');
+            int offset = mask.IndexOf('@');
             if (offset > 0)
             {
-                char[] customs = mark.ToCharArray(offset + 1, mark.Length - offset - 1);
+                char[] customs = mask.ToCharArray(offset + 1, mask.Length - offset - 1);
                 _rooms['c'].ReplaceSource(customs);
             }
             else
             {
-                offset = mark.Length;
+                offset = mask.Length;
             }
 
-            char[] marks = mark.ToCharArray(0, offset);
+            char[] marks = mask.ToCharArray(0, offset);
             //
             List<char> tags = new List<char>();
             List<char> sens = new List<char>();

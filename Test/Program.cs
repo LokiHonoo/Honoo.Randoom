@@ -1,6 +1,7 @@
 ﻿using Honoo;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 namespace test
 {
@@ -17,7 +18,7 @@ namespace test
                 Console.WriteLine();
                 Console.WriteLine("=======================================================================================");
 
-                var randoom = new Randoom();
+                var randoom = new Randoom(); 
                 Console.WriteLine("randoom.NextDouble()");
                 for (int i = 0; i < 10; i++)
                 {

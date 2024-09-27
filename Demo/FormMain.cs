@@ -17,14 +17,14 @@ namespace Demo
         private void ButtonGenerate_Click(object sender, EventArgs e)
         {
             this.ListViewResult.Items.Clear();
-            if (RadioButtonMark.Checked)
+            if (RadioButtonMask.Checked)
             {
-                string mark = this.ComboBoxMark.Text;
+                string mask = this.ComboBoxMask.Text;
                 for (int i = 0; i < this.NumericUpDownGenerateCount.Value; i++)
                 {
                     try
                     {
-                        this.ListViewResult.Items.Add(new ListViewItem(new string[] { i.ToString(), _randoom.NextString(mark) }));
+                        this.ListViewResult.Items.Add(new ListViewItem(new string[] { i.ToString(), _randoom.NextString(mask) }));
                     }
                     catch (Exception ex)
                     {
@@ -53,7 +53,7 @@ namespace Demo
             }
         }
 
-        private void ButtonMarkDescription_Click(object sender, EventArgs e)
+        private void ButtonMaskDescription_Click(object sender, EventArgs e)
         {
             var description = new StringBuilder();
             description.AppendLine("字符范围标记和控制符：");
@@ -93,10 +93,10 @@ namespace Demo
             this.ComboBoxToken.Items.Add("'M' 大写和小写英文字母和阿拉伯数字。");
             this.ComboBoxToken.Items.Add("'h' 小写十六进制字符。");
             this.ComboBoxToken.SelectedIndex = 4;
-            this.ComboBoxMark.Items.Add("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm");
-            this.ComboBoxMark.Items.Add("h[8](-)h[4](-)h[4](-)h[4](-)h[12]");
-            this.ComboBoxMark.Items.Add("(WPD888-5)DDDD(-)DDDDD(-)DDDDD");
-            this.ComboBoxMark.Items.Add("ccccccccccccccccccccccccc@ABCabc12345~!@#$%^*");
+            this.ComboBoxMask.Items.Add("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm");
+            this.ComboBoxMask.Items.Add("h[8](-)h[4](-)h[4](-)h[4](-)h[12]");
+            this.ComboBoxMask.Items.Add("(WPD888-5)DDDD(-)DDDDD(-)DDDDD");
+            this.ComboBoxMask.Items.Add("ccccccccccccccccccccccccc@ABCabc12345~!@#$%^*");
         }
 
         private void FormMain_Shown(object sender, EventArgs e)
