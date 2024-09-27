@@ -9,9 +9,9 @@
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <SignAssembly>True</SignAssembly>
 	<Version>1.0.2</Version>
-	<Authors>LokiHonoo</Authors>
-	<Company>LokiHonoo</Company>
-	<Copyright>Copyright (C) LokiHonoo 2013. All rights reserved.</Copyright>
+	<Authors>Loki Honoo</Authors>
+	<Company>Loki Honoo</Company>
+	<Copyright>Copyright (C) Loki Honoo 2013. All rights reserved.</Copyright>
 	<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 	<PackageTags>Honoo Random Randoom</PackageTags>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
