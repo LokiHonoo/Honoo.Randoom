@@ -1,7 +1,6 @@
 ﻿using Honoo;
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 
 namespace test
 {
@@ -18,43 +17,132 @@ namespace test
                 Console.WriteLine();
                 Console.WriteLine("=======================================================================================");
 
-                var randoom = new Randoom(); 
+                var randoom = new Randoom();
+                //
                 Console.WriteLine("randoom.NextDouble()");
                 for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(randoom.NextDouble());
                 }
                 Console.WriteLine();
+                //
                 Console.WriteLine("randoom.Next()");
                 for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(randoom.Next());
                 }
                 Console.WriteLine();
-                Console.WriteLine("randoom.Next(90000)");
+                //
+                Console.WriteLine("randoom.Next(900000000)");
                 for (int i = 0; i < 10; i++)
                 {
-                    Console.WriteLine(randoom.Next(90000));
+                    Console.WriteLine(randoom.Next(900000000));
                 }
                 Console.WriteLine();
-                Console.WriteLine("randoom.Next(-30, 30)");
+                //
+                Console.WriteLine("randoom.Next(-900000000, 900000000)");
                 for (int i = 0; i < 10; i++)
                 {
-                    Console.WriteLine(randoom.Next(-30, 30));
+                    Console.WriteLine(randoom.Next(-900000000, 900000000));
                 }
                 Console.WriteLine();
+                //
+                Console.WriteLine("randoom.Next(-50, 50)");
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(randoom.Next(-50, 50));
+                }
+                Console.WriteLine();
+                //
+                Console.WriteLine("randoom.NextBytes(bytes)");
+                for (int i = 0; i < 10; i++)
+                {
+                    byte[] bytes = new byte[20];
+                    randoom.NextBytes(bytes);
+                    Console.WriteLine(BitConverter.ToString(bytes));
+                }
+                Console.WriteLine();
+                //
+                Console.WriteLine("randoom.NextNonZeroBytes(bytes)");
+                for (int i = 0; i < 10; i++)
+                {
+                    byte[] bytes = new byte[20];
+                    randoom.NextNonZeroBytes(bytes);
+                    Console.WriteLine(BitConverter.ToString(bytes));
+                }
+                Console.WriteLine();
+                //
+                Console.WriteLine("randoom.NextSingle()");
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(randoom.NextSingle());
+                }
+                Console.WriteLine();
+                //
+                Console.WriteLine("randoom.NextInt64()");
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(randoom.NextInt64());
+                }
+                Console.WriteLine();
+                //
+                Console.WriteLine("randoom.NextInt64(9000000000000000000)");
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(randoom.NextInt64(9000000000000000000));
+                }
+                Console.WriteLine();
+                //
+                Console.WriteLine("randoom.NextInt64(-9000000000000000000, 9000000000000000000)");
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(randoom.NextInt64(-9000000000000000000, 9000000000000000000));
+                }
+                Console.WriteLine();
+                //
+                Console.WriteLine("randoom.NextInt64(-50, 50)");
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine(randoom.NextInt64(-50, 50));
+                }
+                Console.WriteLine();
+
+#if NET6_0_OR_GREATER
+                //
+                Console.WriteLine("randoom.NextBytes(spanbytes)");
+                for (int i = 0; i < 10; i++)
+                {
+                   Span<byte>  bytes = new byte[20];
+                    randoom.NextBytes(bytes);
+                    Console.WriteLine(BitConverter.ToString(bytes.ToArray()));
+                }
+                Console.WriteLine();
+                //
+                Console.WriteLine("randoom.NextNonZeroBytes(spanbytes)");
+                for (int i = 0; i < 10; i++)
+                {
+                    Span<byte> bytes = new byte[20];
+                    randoom.NextNonZeroBytes(bytes);
+                    Console.WriteLine(BitConverter.ToString(bytes.ToArray()));
+                }
+                Console.WriteLine();
+
+#endif
+                //
                 Console.WriteLine("randoom.NextString(60, 'm')");
                 for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(randoom.NextString(60, 'm'));
                 }
                 Console.WriteLine();
+                //
                 Console.WriteLine("randoom.NextString(60, \"!@#$%^&*()_~!@#$%^&*()^&*()_+\")");
                 for (int i = 0; i < 10; i++)
                 {
                     Console.WriteLine(randoom.NextString(60, "!@#$%^&*()_~!@#$%^&*()^&*()_+"));
                 }
                 Console.WriteLine();
+                //
                 Console.WriteLine("Randoom.NextString(\"+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm\")");
                 Console.WriteLine(randoom.NextString("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm"));
                 Console.WriteLine(randoom.NextString("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm"));
@@ -124,6 +212,28 @@ namespace test
                 {
                     Console.WriteLine(item.Key + ": " + item.Value[0]);
                 }
+                Console.WriteLine();
+                //
+                Console.WriteLine("randoom.NextInt64(-9000000000000000000, 9000000000000000000)");
+                for (int i = 0; i < 100; i++)
+                {
+                    int v = randoom.Next(-900000000, 900000000);
+                    Console.Write(v);
+                    Console.WriteLine(v < -900000000 || v > 900000000 ? " ------------" : "\r");
+                }
+                Console.WriteLine();
+                //
+                Console.WriteLine("randoom.NextInt64(-9000000000000000000, 9000000000000000000)");
+                for (int i = 0; i < 100; i++)
+                {
+                    long v = randoom.NextInt64(-9000000000000000000, 9000000000000000000);
+                    Console.Write(v);
+                    Console.WriteLine(v < -9000000000000000000 || v > 9000000000000000000 ? " ------------" : "\r");
+                }
+                Console.WriteLine();
+                //
+                //
+                //
                 Console.ReadKey(true);
             }
         }

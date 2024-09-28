@@ -1,0 +1,16 @@
+﻿[*.cs]
+
+# SYSLIB0045: 类型或成员已过时
+dotnet_diagnostic.SYSLIB0045.severity = silent
+
+# CA1512: 使用 ArgumentOutOfRangeException 引发帮助程序
+dotnet_diagnostic.CA1512.severity = silent
+
+# CA1510: 使用 ArgumentNullException 引发帮助程序
+dotnet_diagnostic.CA1510.severity = silent
+
+# CA1307: 为了清晰起见，请指定 StringComparison
+dotnet_diagnostic.CA1307.severity = silent
+
+# IDE0305: 简化集合初始化
+dotnet_diagnostic.IDE0305.severity = silent
