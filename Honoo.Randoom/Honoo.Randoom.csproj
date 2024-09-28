@@ -13,7 +13,7 @@
 	<Company>Loki Honoo</Company>
 	<Copyright>Copyright (C) Loki Honoo 2013. All rights reserved.</Copyright>
 	<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-	<PackageTags>Honoo Random Randoom</PackageTags>
+	<PackageTags>Honoo;Random;Randoom</PackageTags>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<PackageProjectUrl>https://github.com/LokiHonoo/Honoo.Randoom</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/LokiHonoo/Honoo.Randoom</RepositoryUrl>
