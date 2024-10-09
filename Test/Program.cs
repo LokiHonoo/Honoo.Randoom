@@ -214,22 +214,50 @@ namespace test
                 }
                 Console.WriteLine();
                 //
-                Console.WriteLine("randoom.NextInt64(-9000000000000000000, 9000000000000000000)");
+                int c1 = 0;
+                int c2 = 0;
+                int c3 = 0;
+                Console.WriteLine("randoom.Next(-900000000, 900000000)");
                 for (int i = 0; i < 100; i++)
                 {
                     int v = randoom.Next(-900000000, 900000000);
-                    Console.Write(v);
-                    Console.WriteLine(v < -900000000 || v > 900000000 ? " ------------" : "\r");
+                    if (v < 0)
+                    {
+                        c1++;
+                    }
+                    if (v >= 0)
+                    {
+                        c2++;
+                    }
+                    if (v < -900000000 || v > 900000000)
+                    {
+                        c3++;
+                    }
                 }
+                Console.WriteLine($"less0={c1}    more0={c2}   overflow={c3}");
                 Console.WriteLine();
                 //
+                c1 = 0;
+                c2 = 0;
+                c3 = 0;
                 Console.WriteLine("randoom.NextInt64(-9000000000000000000, 9000000000000000000)");
                 for (int i = 0; i < 100; i++)
                 {
                     long v = randoom.NextInt64(-9000000000000000000, 9000000000000000000);
-                    Console.Write(v);
-                    Console.WriteLine(v < -9000000000000000000 || v > 9000000000000000000 ? " ------------" : "\r");
+                    if (v < 0)
+                    {
+                        c1++;
+                    }
+                    if (v >= 0)
+                    {
+                        c2++;
+                    }
+                    if (v < -9000000000000000000 || v > 9000000000000000000)
+                    {
+                        c3++;
+                    }
                 }
+                Console.WriteLine($"less0={c1}    more0={c2}   overflow={c3}");
                 Console.WriteLine();
                 //
                 //
