@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net40;netstandard2.0;net8.0</TargetFrameworks>
 	<RootNamespace>Honoo</RootNamespace>
 	<PackageId>Honoo.Randoom</PackageId>
 	<Product>Honoo.Randoom</Product>	  
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <SignAssembly>True</SignAssembly>
-	<Version>1.0.4</Version>
+	<Version>1.1.0</Version>
 	<Authors>Loki Honoo</Authors>
 	<Company>Loki Honoo</Company>
 	<Copyright>Copyright (C) Loki Honoo 2013. All rights reserved.</Copyright>
@@ -21,7 +21,7 @@
 randoom.Next();
 randoom.NextDouble();
 randoom.NextString(60, 'm');
-randoom.NextString("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm");</Description>
+randoom.NextString("+h[8](-)h[4](-)h[4](-)h[4](-)h[12]");</Description>
 	<PackageReadmeFile>Honoo.Randoom.md</PackageReadmeFile>
 	<AnalysisLevel>latest-all</AnalysisLevel>
 	<AssemblyOriginatorKeyFile>Honoo.Randoom.snk</AssemblyOriginatorKeyFile>
@@ -37,6 +37,7 @@ randoom.NextString("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm");</Description>
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageOutputPath>D:\NuGetPackages</PackageOutputPath>
 	</PropertyGroup>
 	

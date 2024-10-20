@@ -1,4 +1,4 @@
-﻿#if NET6_0_OR_GREATER
+﻿#if NET8_0_OR_GREATER
 
 using System;
 
@@ -12,7 +12,7 @@ namespace Honoo
         /// <param name="buffer">要填充的字节数组。</param>
         public void NextBytes(Span<byte> buffer)
         {
-            if (buffer == null)
+            if (buffer.IsEmpty)
             {
                 throw new ArgumentNullException(nameof(buffer));
             }
@@ -27,7 +27,7 @@ namespace Honoo
         /// <param name="length">要填充的长度。</param>
         public void NextBytes(Span<byte> buffer, int offset, int length)
         {
-            if (buffer == null)
+            if (buffer.IsEmpty)
             {
                 throw new ArgumentNullException(nameof(buffer));
             }
@@ -55,7 +55,7 @@ namespace Honoo
         /// <param name="buffer">要填充的字节数组。</param>
         public void NextNonZeroBytes(Span<byte> buffer)
         {
-            if (buffer == null)
+            if (buffer.IsEmpty)
             {
                 throw new ArgumentNullException(nameof(buffer));
             }
@@ -70,7 +70,7 @@ namespace Honoo
         /// <param name="length">要填充的长度。</param>
         public void NextNonZeroBytes(Span<byte> buffer, int offset, int length)
         {
-            if (buffer == null)
+            if (buffer.IsEmpty)
             {
                 throw new ArgumentNullException(nameof(buffer));
             }

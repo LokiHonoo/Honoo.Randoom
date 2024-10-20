@@ -107,7 +107,7 @@ namespace test
                 }
                 Console.WriteLine();
 
-#if NET6_0_OR_GREATER
+#if NET8_0_OR_GREATER
                 //
                 Console.WriteLine("randoom.NextBytes(spanbytes)");
                 for (int i = 0; i < 10; i++)
@@ -143,30 +143,30 @@ namespace test
                 }
                 Console.WriteLine();
                 //
-                Console.WriteLine("Randoom.NextString(\"+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm\")");
-                Console.WriteLine(randoom.NextString("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm"));
-                Console.WriteLine(randoom.NextString("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm"));
-                Console.WriteLine(randoom.NextString("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm"));
+                Console.WriteLine("Randoom.NextString(\"+mmmmm{-}mmmmm{-}mmmmm{-}mmmmm{-}mmmmm\")");
+                Console.WriteLine(randoom.NextString("+mmmmm{-}mmmmm{-}mmmmm{-}mmmmm{-}mmmmm"));
+                Console.WriteLine(randoom.NextString("+mmmmm{-}mmmmm{-}mmmmm{-}mmmmm{-}mmmmm"));
+                Console.WriteLine(randoom.NextString("+mmmmm{-}mmmmm{-}mmmmm{-}mmmmm{-}mmmmm"));
                 Console.WriteLine();
-                Console.WriteLine("Randoom.NextString(\"h[8](-)h[4](-)h[4](-)h[4](-)h[12]\")");
-                Console.WriteLine(randoom.NextString("h[8](-)h[4](-)h[4](-)h[4](-)h[12]"));
-                Console.WriteLine(randoom.NextString("h[8](-)h[4](-)h[4](-)h[4](-)h[12]"));
-                Console.WriteLine(randoom.NextString("h[8](-)h[4](-)h[4](-)h[4](-)h[12]"));
+                Console.WriteLine("Randoom.NextString(\"h[8]{-}h[4]{-}h[4]{-}h[4]{-}h[12]\")");
+                Console.WriteLine(randoom.NextString("h[8]{-}h[4]{-}h[4]{-}h[4]{-}h[12]"));
+                Console.WriteLine(randoom.NextString("h[8]{-}h[4]{-}h[4]{-}h[4]{-}h[12]"));
+                Console.WriteLine(randoom.NextString("h[8]{-}h[4]{-}h[4]{-}h[4]{-}h[12]"));
                 Console.WriteLine();
-                Console.WriteLine("Randoom.NextString(\"(WPD888-5)DDDD(-)DDDDD(-)DDDDD\")");
-                Console.WriteLine(randoom.NextString("(WPD888-5)DDDD(-)DDDDD(-)DDDDD"));
-                Console.WriteLine(randoom.NextString("(WPD888-5)DDDD(-)DDDDD(-)DDDDD"));
-                Console.WriteLine(randoom.NextString("(WPD888-5)DDDD(-)DDDDD(-)DDDDD"));
+                Console.WriteLine("Randoom.NextString(\"{WPD888-5}DDDD{-}DDDDD{-}DDDDD\")");
+                Console.WriteLine(randoom.NextString("{WPD888-5}DDDD{-}DDDDD{-}DDDDD"));
+                Console.WriteLine(randoom.NextString("{WPD888-5}DDDD{-}DDDDD{-}DDDDD"));
+                Console.WriteLine(randoom.NextString("{WPD888-5}DDDD{-}DDDDD{-}DDDDD"));
                 Console.WriteLine();
-                Console.WriteLine("Randoom.NextString(\"(TB(667!)ED-)aaaaaa!-aaaaaaaa\")");
-                Console.WriteLine(randoom.NextString("(TB(667!)ED-)aaaaaa!-aaaaaaaa"));
-                Console.WriteLine(randoom.NextString("(TB(667!)ED-)aaaaaa!-aaaaaaaa"));
-                Console.WriteLine(randoom.NextString("(TB(667!)ED-)aaaaaa!-aaaaaaaa"));
+                Console.WriteLine("Randoom.NextString(\"{TB{667!}ED-}aaaaaa!-aaaaaaaa\")");
+                Console.WriteLine(randoom.NextString("{TB{667!}ED-}aaaaaa!-aaaaaaaa"));
+                Console.WriteLine(randoom.NextString("{TB{667!}ED-}aaaaaa!-aaaaaaaa"));
+                Console.WriteLine(randoom.NextString("{TB{667!}ED-}aaaaaa!-aaaaaaaa"));
                 Console.WriteLine();
-                Console.WriteLine("Randoom.NextString(\"(AAA)cccccc(---)c[12]@ABCabc12345~!@#$%^*\")");
-                Console.WriteLine(randoom.NextString("(AAA)cccccc(---)c[12]@ABCabc12345~!@#$%^*"));
-                Console.WriteLine(randoom.NextString("(AAA)cccccc(---)c[12]@ABCabc12345~!@#$%^*"));
-                Console.WriteLine(randoom.NextString("(AAA)cccccc(---)c[12]@ABCabc12345~!@#$%^*"));
+                Console.WriteLine("Randoom.NextString(\"{AAA}cccccc{---}c[12]@ABCabc12345~!@#$%^*\")");
+                Console.WriteLine(randoom.NextString("{AAA}cccccc{---}c[12]@ABCabc12345~!@#$%^*"));
+                Console.WriteLine(randoom.NextString("{AAA}cccccc{---}c[12]@ABCabc12345~!@#$%^*"));
+                Console.WriteLine(randoom.NextString("{AAA}cccccc{---}c[12]@ABCabc12345~!@#$%^*"));
                 Console.WriteLine();
                 //
                 var sta1 = new Dictionary<int, int[]>();

@@ -23,16 +23,16 @@ Just a random.
 
 private static void Main()
 {
-    using (var randoom = new Randoom(null, SHA512.Create()))
+    using (var randoom = new Randoom(seedBytes, SHA512.Create()))
     {
-      // int
+      // Create int.
       randoom.Next();
-      // double
+      // Create double.
       randoom.NextDouble();
-      // char token group
+      // Create string from char token group.
       randoom.NextString(60, 'm');
-      // char mask
-      randoom.NextString("+mmmmm(-)mmmmm(-)mmmmm(-)mmmmm(-)mmmmm");
+      // Create string from mask.
+      randoom.NextString("h[8]{-}h[4]{-}h[4]{-}h[4]{-}h[12]");
     }
 }
 

@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+	  <PackageId>Randoom</PackageId>
+	  <Product>Honoo.Randoom</Product>
+	  <Version>1.1.0</Version>
+	  <Authors>Loki Honoo</Authors>
+	  <Company>Loki Honoo</Company>
+	  <Copyright>Copyright (C) Loki Honoo 2013. All rights reserved.</Copyright>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+	  <PackageTags>Honoo;Random;Randoom</PackageTags>
+	  <PublishAot>true</PublishAot>
+	  <PackageProjectUrl>https://github.com/LokiHonoo/Honoo.Randoom</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/LokiHonoo/Honoo.Randoom</RepositoryUrl>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnableNETAnalyzers>True</EnableNETAnalyzers>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+	  <BaseOutputPath>..\bin\</BaseOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Honoo.Configuration.ConfigurationManager" Version="1.5.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Honoo.Randoom\Honoo.Randoom.csproj" />
+  </ItemGroup>
+
+</Project>

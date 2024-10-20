@@ -44,7 +44,7 @@ namespace Honoo
         /// 创建 Randoom 的新实例。
         /// </summary>
         /// <param name="seed">额外的种子，通常采集终端用户的鼠标、按键等行为生成。</param>
-        /// <param name="hashAlgorithm">用于随机数生成的 hash 算法实例。必须是大于等于 64 bits 的算法。</param>
+        /// <param name="hashAlgorithm">用于随机数生成的 hash 算法实例。必须是大于等于 64 bits 的算法。此 hash 算法实例跟随 Randoom 实例释放。</param>
         public Randoom(byte[] seed, HashAlgorithm hashAlgorithm)
         {
             _hashAlgorithm = hashAlgorithm ?? throw new ArgumentNullException(nameof(hashAlgorithm));
