@@ -68,7 +68,7 @@ namespace Randoom
                 Console.WriteLine($"  3. {choices[2]}");
                 Console.WriteLine($"  4. {choices[3]}");
                 Console.WriteLine($"  5. {choices[4]}");
-                Console.WriteLine($"  6. {choices[5]}");
+                Console.WriteLine($"  6. {choices[5]} （默认）");
                 Console.WriteLine($"  7. {choices[6]}");
                 Console.WriteLine($"  8. {choices[7]}");
                 Console.WriteLine($"  9. {choices[8]}");
@@ -77,21 +77,21 @@ namespace Randoom
                 Console.WriteLine("  D. 掩码说明");
                 Console.WriteLine();
                 Console.WriteLine();
-                Console.Write("按键选择项目:");
+                Console.Write("按键选择项目 （回车选择默认项）:");
                 while (true)
                 {
                     var kc = Console.ReadKey(true).KeyChar;
                     switch (kc)
                     {
-                        case '1': charCount = GetCharCount(choices[0]); if (charCount > 0) { Create(choices[0], charCount, 'D', GetCount(choices[0], charCount)); } break;
-                        case '2': charCount = GetCharCount(choices[1]); if (charCount > 0) { Create(choices[1], charCount, 'd', GetCount(choices[1], charCount)); } break;
-                        case '3': charCount = GetCharCount(choices[2]); if (charCount > 0) { Create(choices[2], charCount, 'A', GetCount(choices[2], charCount)); } break;
-                        case '4': charCount = GetCharCount(choices[3]); if (charCount > 0) { Create(choices[3], charCount, 'a', GetCount(choices[3], charCount)); } break;
-                        case '5': charCount = GetCharCount(choices[4]); if (charCount > 0) { Create(choices[4], charCount, 'M', GetCount(choices[4], charCount)); } break;
-                        case '6': charCount = GetCharCount(choices[5]); if (charCount > 0) { Create(choices[5], charCount, 'm', GetCount(choices[5], charCount)); } break;
-                        case '7': charCount = GetCharCount(choices[6]); if (charCount > 0) { Create(choices[6], charCount, 'h', GetCount(choices[6], charCount)); } break;
-                        case '8': mask = GetMask(choices[7]); Create(choices[7], mask, GetCount(choices[7], mask)); break;
-                        case '9': byteCount = GetByteCount(); Create(choices[8], byteCount); break;
+                        case '1': charCount = GetCharCount(choices[0]); if (charCount > 0) Create(choices[0], charCount, 'D', GetCount(choices[0], "字符数量 - " + charCount)); break;
+                        case '2': charCount = GetCharCount(choices[1]); if (charCount > 0) Create(choices[1], charCount, 'd', GetCount(choices[1], "字符数量 - " + charCount)); break;
+                        case '3': charCount = GetCharCount(choices[2]); if (charCount > 0) Create(choices[2], charCount, 'A', GetCount(choices[2], "字符数量 - " + charCount)); break;
+                        case '4': charCount = GetCharCount(choices[3]); if (charCount > 0) Create(choices[3], charCount, 'a', GetCount(choices[3], "字符数量 - " + charCount)); break;
+                        case '5': charCount = GetCharCount(choices[4]); if (charCount > 0) Create(choices[4], charCount, 'M', GetCount(choices[4], "字符数量 - " + charCount)); break;
+                        case '6': case '\r': charCount = GetCharCount(choices[5]); if (charCount > 0) Create(choices[5], charCount, 'm', GetCount(choices[5], "字符数量 - " + charCount)); break;
+                        case '7': charCount = GetCharCount(choices[6]); if (charCount > 0) Create(choices[6], charCount, 'h', GetCount(choices[6], "字符数量 - " + charCount)); break;
+                        case '8': mask = GetMask(choices[7]); if (!string.IsNullOrEmpty(mask)) Create(choices[7], mask, GetCount(choices[7], "掩码文本 - " + mask)); break;
+                        case '9': byteCount = GetByteCount(); if (byteCount > 0) Create(choices[8], byteCount, GetCount(choices[8], "数组长度 - " + byteCount)); break;
                         case 'S': case 's': BuildSeed(); break;
                         case 'D': case 'd': Console.Clear(); Console.WriteLine(MASK_DESCRIPTION); break;
                         default: continue;
@@ -120,7 +120,7 @@ namespace Randoom
             Console.WriteLine("  0/256");
             Console.WriteLine();
             Console.WriteLine();
-            Console.Write("按任意按键获取随机事件,回车键终止:");
+            Console.Write("按任意键获取随机事件,回车键终止，生成的随机数种子在当前实例使用:");
             while (true)
             {
                 var kc = Console.ReadKey(true).KeyChar;
@@ -146,7 +146,7 @@ namespace Randoom
             }
         }
 
-        private static void Create(string choice, int byteCount)
+        private static void Create(string choice, int byteCount, int count)
         {
             Console.Clear();
             Console.WriteLine("=======================================================================================");
@@ -156,20 +156,24 @@ namespace Randoom
             Console.WriteLine("=======================================================================================");
             Console.WriteLine();
             Console.WriteLine($"  字符选择 - {choice}");
+            Console.WriteLine($"  数组长度 - {byteCount} bytes");
+            Console.WriteLine($"  生成数量 - {count}");
             Console.WriteLine();
             Console.WriteLine();
             using (var randoom = new Honoo.Randoom(_seed))
             {
                 byte[] buffer = new byte[byteCount];
-                randoom.NextNonZeroBytes(buffer);
-                string str = BitConverter.ToString(buffer);
-                Console.WriteLine(str);
-                Console.WriteLine();
-                Console.WriteLine(str.Replace("-", ""));
-                Console.WriteLine();
-                Console.WriteLine("byte[] bytes = new byte[] { 0x" + str.Replace("-", ", 0x") + " };");
-                Console.WriteLine();
-                Console.WriteLine(Convert.ToBase64String(buffer));
+                for (int i = 0; i < count; i++)
+                {
+                    Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    randoom.NextNonZeroBytes(buffer);
+                    string str = BitConverter.ToString(buffer);
+                    Console.WriteLine(str);
+                    Console.WriteLine(str.Replace("-", ""));
+                    Console.WriteLine("byte[] bytes = new byte[] { 0x" + str.Replace("-", ", 0x") + " };");
+                    Console.WriteLine(Convert.ToBase64String(buffer));
+                    Console.WriteLine();
+                }
             }
         }
 
@@ -233,23 +237,26 @@ namespace Randoom
                 Console.WriteLine($"  对称加密算法/HMAC/密钥交换随机数");
                 Console.WriteLine();
                 Console.WriteLine("  1. 64 bit - 8 bytes");
-                Console.WriteLine("  2. 128 bit - 16 bytes");
+                Console.WriteLine("  2. 128 bit - 16 bytes （默认）");
                 Console.WriteLine("  3. 192 bit - 24 bytes");
                 Console.WriteLine("  4. 256 bit - 32 bytes");
                 Console.WriteLine("  5. 512 bit - 64 bytes");
                 Console.WriteLine();
+                Console.WriteLine("  Z. 返回主菜单");
                 Console.WriteLine();
-                Console.Write("按键选择项目:");
+                Console.WriteLine();
+                Console.Write("按键选择项目 （回车选择默认项）:");
                 while (true)
                 {
                     var kc = Console.ReadKey(true).KeyChar;
                     switch (kc)
                     {
                         case '1': return 8;
-                        case '2': return 16;
+                        case '2': case '\r': Console.WriteLine(); return 16;
                         case '3': return 24;
                         case '4': return 32;
                         case '5': return 64;
+                        case 'Z': case 'z': return 0;
                         default: continue;
                     }
                 }
@@ -270,8 +277,12 @@ namespace Randoom
                 Console.WriteLine($"  字符选择 - {choice}");
                 Console.WriteLine();
                 Console.WriteLine();
-                Console.Write("输入要生成字符串的字符数量，按回车确认:");
+                Console.Write("输入要生成字符串的字符数量，按回车确认 （直接回车选择 16 字符）:");
                 string? input = Console.ReadLine();
+                if (input == "")
+                {
+                    return 16;
+                }
                 if (int.TryParse(input, out int charCount))
                 {
                     return charCount;
@@ -279,7 +290,7 @@ namespace Randoom
             }
         }
 
-        private static int GetCount(string choice, int charCount)
+        private static int GetCount(string choice, string sub)
         {
             while (true)
             {
@@ -291,54 +302,20 @@ namespace Randoom
                 Console.WriteLine("=======================================================================================");
                 Console.WriteLine();
                 Console.WriteLine($"  字符选择 - {choice}");
-                Console.WriteLine($"  字符数量 - {charCount}");
+                Console.WriteLine($"  {sub}");
                 Console.WriteLine();
-                Console.WriteLine("  1. 生成数量 - 4");
+                Console.WriteLine("  1. 生成数量 - 4  （默认）");
                 Console.WriteLine("  2. 生成数量 - 8");
                 Console.WriteLine("  3. 生成数量 - 16");
                 Console.WriteLine();
                 Console.WriteLine();
-                Console.Write("按键选择项目:");
+                Console.Write("按键选择项目 （回车选择默认项）:");
                 while (true)
                 {
                     var kc = Console.ReadKey(true).KeyChar;
                     switch (kc)
                     {
-                        case '1': return 4;
-                        case '2': return 8;
-                        case '3': return 16;
-                        default: continue;
-                    }
-                }
-            }
-        }
-
-        private static int GetCount(string choice, string mask)
-        {
-            while (true)
-            {
-                Console.Clear();
-                Console.WriteLine("=======================================================================================");
-                Console.WriteLine();
-                Console.WriteLine("                            Randoom creater   runtime " + Environment.Version);
-                Console.WriteLine();
-                Console.WriteLine("=======================================================================================");
-                Console.WriteLine();
-                Console.WriteLine($"  字符选择 - {choice}");
-                Console.WriteLine($"  掩码文本 - {mask}");
-                Console.WriteLine();
-                Console.WriteLine("  1. 生成数量 - 4");
-                Console.WriteLine("  2. 生成数量 - 8");
-                Console.WriteLine("  3. 生成数量 - 16");
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.Write("按键选择项目:");
-                while (true)
-                {
-                    var kc = Console.ReadKey(true).KeyChar;
-                    switch (kc)
-                    {
-                        case '1': return 4;
+                        case '1': case '\r': return 4;
                         case '2': return 8;
                         case '3': return 16;
                         default: continue;
@@ -392,16 +369,23 @@ namespace Randoom
                 Console.WriteLine();
                 Console.WriteLine($"  字符选择 - {choice}");
                 Console.WriteLine();
-                Console.WriteLine();
                 foreach (var item in choices)
                 {
                     Console.WriteLine($"  {item.Item1}. {item.Item3}");
                 }
                 Console.WriteLine();
+                Console.WriteLine("  Z. 返回主菜单");
+                Console.WriteLine();
+                Console.WriteLine();
                 Console.Write("按键选择项目:");
                 while (true)
                 {
                     var kc = Console.ReadKey(true).KeyChar;
+                    if (kc == 'Z' || kc == 'z')
+                    {
+                        Console.WriteLine();
+                        return string.Empty;
+                    }
                     foreach (var item in choices)
                     {
                         if (kc == item.Item1)

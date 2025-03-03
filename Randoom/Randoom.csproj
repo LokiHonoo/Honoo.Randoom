@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
+  <PropertyGroup>  
+	  <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
 	  <PackageId>Randoom</PackageId>
 	  <Product>Honoo.Randoom</Product>
@@ -8,7 +9,6 @@
 	  <Authors>Loki Honoo</Authors>
 	  <Company>Loki Honoo</Company>
 	  <Copyright>Copyright (C) Loki Honoo 2013. All rights reserved.</Copyright>
-    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
 	  <PackageTags>Honoo;Random;Randoom</PackageTags>
 	  <PublishAot>true</PublishAot>

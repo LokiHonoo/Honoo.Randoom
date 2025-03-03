@@ -21,7 +21,7 @@
 randoom.Next();
 randoom.NextDouble();
 randoom.NextString(60, 'm');
-randoom.NextString("+h[8](-)h[4](-)h[4](-)h[4](-)h[12]");</Description>
+randoom.NextString("h[8]{-}h[4]{-}h[4]{-}h[4]{-}h[12]");</Description>
 	<PackageReadmeFile>Honoo.Randoom.md</PackageReadmeFile>
 	<AnalysisLevel>latest-all</AnalysisLevel>
 	<AssemblyOriginatorKeyFile>Honoo.Randoom.snk</AssemblyOriginatorKeyFile>
