@@ -1,4 +1,4 @@
-name: Release NET8
+name: Release master
 on:
   push:
     branches: [ "master" ]
