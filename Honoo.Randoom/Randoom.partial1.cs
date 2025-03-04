@@ -121,6 +121,7 @@ namespace Honoo
         /// <param name="mask">由字符范围标记和控制符组成的掩码字符串。</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1308:将字符串规范化为大写", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public string NextString(string mask)
         {
             if (string.IsNullOrWhiteSpace(mask))
