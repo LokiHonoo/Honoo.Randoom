@@ -2,13 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace Randoom
 {
     internal class Program
     {
         private const string MASK_DESCRIPTION =
-            "调用 NextString(string mask) 返回一个由掩码定义的随机字符串。\r\n" +
+            "调用 Randoom.NextString(string mask) 返回一个由掩码定义的随机字符串。\r\n" +
             "\r\n" +
             "字符范围标记和控制符：\r\n" +
             "'D' 或 '0' 阿拉伯数字。\r\n" +
@@ -28,17 +29,34 @@ namespace Randoom
             "'.' 点号控制符之后的随机字符不再进行大小写转换。\r\n" +
             "\r\n" +
             "实例：\r\n" +
-            "+mmmmm{-}mmmmm{-}mmmmm{-}mmmmm{-}mmmmm ||| 模拟 Windows 序列号。\r\n" +
-            "h[8]{-}h[4]{-}h[4]{-}h[4]{-}h[12] ||| 模拟 GUID。\r\n" +
-            "{WPD888-5}DDDD{-}DDDDD{-}DDDDD ||| 模拟 Macromedia 8 序列号。\r\n" +
-            "ccccccccccccccccccccccccc@ABCabc12345~!@#$%^* ||| 自定义字符。";
+            "+mmmmm{-}mmmmm{-}mmmmm{-}mmmmm{-}mmmmm            模拟 Windows 序列号。\r\n" +
+            "h[8]{-}h[4]{-}h[4]{-}h[4]{-}h[12]                 模拟 GUID。\r\n" +
+            "{WPD888-5}DDDD{-}DDDDD{-}DDDDD                    模拟 Macromedia 8 序列号。\r\n" +
+            "ccccccccccccccccccccccccc@ABCabc12345~!@#$%^*     自定义字符。";
 
+        private static readonly Dictionary<char, Tuple<string, string>> _masks = [];
+        private static int _maskPadding = 0;
         private static byte[]? _seed;
 
         #region Main
 
         private static void Main()
         {
+            if (!File.Exists("mask.xml"))
+            {
+                using (var manager = CreateMaskStore())
+                {
+                    LoadMaskStore(manager);
+                }
+            }
+            else
+            {
+                using (var manager = new XConfigManager("mask.xml"))
+                {
+                    LoadMaskStore(manager);
+                }
+            }
+            //
             string[] choices =
             [
                 "阿拉伯数字",
@@ -48,15 +66,13 @@ namespace Randoom
                 "大写和小写英文字母和阿拉伯数字",
                 "大写和小写英文字母和阿拉伯数字，不包括字形易混淆的字符",
                 "小写十六进制字符",
-                "掩码模式（编辑 mask.xml 增加掩码模板）",
+                "掩码模式",
                 "字节数组"
             ];
-            int charCount;
-            string mask;
-            int byteCount;
             while (true)
             {
                 Console.Clear();
+                Console.WriteLine("\x1b[3J");
                 Console.WriteLine("=======================================================================================");
                 Console.WriteLine();
                 Console.WriteLine("                            Randoom creater   runtime " + Environment.Version);
@@ -68,31 +84,31 @@ namespace Randoom
                 Console.WriteLine($"  3. {choices[2]}");
                 Console.WriteLine($"  4. {choices[3]}");
                 Console.WriteLine($"  5. {choices[4]}");
-                Console.WriteLine($"  6. {choices[5]} （默认）");
+                Console.Write($"  6. {choices[5]}"); Console.ForegroundColor = ConsoleColor.DarkYellow; Console.WriteLine(" （默认）"); Console.ResetColor();
                 Console.WriteLine($"  7. {choices[6]}");
                 Console.WriteLine($"  8. {choices[7]}");
                 Console.WriteLine($"  9. {choices[8]}");
                 Console.WriteLine();
                 Console.WriteLine("  S. 生成真随机种子");
-                Console.WriteLine("  D. 掩码说明");
+                Console.WriteLine("  D. 掩码模式说明");
                 Console.WriteLine();
                 Console.WriteLine();
-                Console.Write("按键选择项目 （回车选择默认项）:");
+                Console.Write("按键选择项目 （回车选择默认项）：");
                 while (true)
                 {
                     var kc = Console.ReadKey(true).KeyChar;
                     switch (kc)
                     {
-                        case '1': charCount = GetCharCount(choices[0]); if (charCount > 0) Create(choices[0], charCount, 'D', GetCount(choices[0], "字符数量 - " + charCount)); break;
-                        case '2': charCount = GetCharCount(choices[1]); if (charCount > 0) Create(choices[1], charCount, 'd', GetCount(choices[1], "字符数量 - " + charCount)); break;
-                        case '3': charCount = GetCharCount(choices[2]); if (charCount > 0) Create(choices[2], charCount, 'A', GetCount(choices[2], "字符数量 - " + charCount)); break;
-                        case '4': charCount = GetCharCount(choices[3]); if (charCount > 0) Create(choices[3], charCount, 'a', GetCount(choices[3], "字符数量 - " + charCount)); break;
-                        case '5': charCount = GetCharCount(choices[4]); if (charCount > 0) Create(choices[4], charCount, 'M', GetCount(choices[4], "字符数量 - " + charCount)); break;
-                        case '6': case '\r': charCount = GetCharCount(choices[5]); if (charCount > 0) Create(choices[5], charCount, 'm', GetCount(choices[5], "字符数量 - " + charCount)); break;
-                        case '7': charCount = GetCharCount(choices[6]); if (charCount > 0) Create(choices[6], charCount, 'h', GetCount(choices[6], "字符数量 - " + charCount)); break;
-                        case '8': mask = GetMask(choices[7]); if (!string.IsNullOrEmpty(mask)) Create(choices[7], mask, GetCount(choices[7], "掩码文本 - " + mask)); break;
-                        case '9': byteCount = GetByteCount(); if (byteCount > 0) Create(choices[8], byteCount, GetCount(choices[8], "数组长度 - " + byteCount)); break;
-                        case 'S': case 's': BuildSeed(); break;
+                        case '1': CreateByToken(choices[0], 'D'); break;
+                        case '2': CreateByToken(choices[1], 'd'); break;
+                        case '3': CreateByToken(choices[2], 'A'); break;
+                        case '4': CreateByToken(choices[3], 'a'); break;
+                        case '5': CreateByToken(choices[4], 'M'); break;
+                        case '6': case '\r': CreateByToken(choices[5], 'm'); break;
+                        case '7': CreateByToken(choices[6], 'h'); break;
+                        case '8': CreateByMask(choices[7]); break;
+                        case '9': CreateByteArray(choices[8]); break;
+                        case 'S': case 's': _seed = BuildSeed(); break;
                         case 'D': case 'd': Console.Clear(); Console.WriteLine(MASK_DESCRIPTION); break;
                         default: continue;
                     }
@@ -106,7 +122,213 @@ namespace Randoom
 
         #endregion Main
 
-        private static void BuildSeed()
+        #region Token
+
+        private static void CreateByToken(string choice, char token)
+        {
+            int charCount = GetCharCount($"字符标记： {choice}", "字符个数：", "生成数量：");
+            if (charCount > 0)
+            {
+                int createCount = GetCreateCount(4, $"字符标记： {choice}", $"字符个数： {charCount}", "生成数量：");
+                var sb = new StringBuilder();
+                using (var randoom = new Honoo.Randoom(_seed))
+                {
+                    for (int i = 0; i < createCount; i++)
+                    {
+                        sb.AppendLine(randoom.NextString(charCount, token));
+                    }
+                }
+                Finish(sb.ToString(), $"字符标记： {choice}", $"字符个数： {charCount}", $"生成数量： {createCount}");
+            }
+        }
+
+        private static int GetCharCount(params string[] explain)
+        {
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("=======================================================================================");
+                Console.WriteLine();
+                Console.WriteLine("                            Randoom creater   runtime " + Environment.Version);
+                Console.WriteLine();
+                Console.WriteLine("=======================================================================================");
+                Console.WriteLine();
+                foreach (var str in explain)
+                {
+                    Console.WriteLine($"  {str}");
+                }
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.Write("输入要生成的字符个数，按回车确认 （直接回车选择"); Console.ForegroundColor = ConsoleColor.DarkYellow; Console.Write(" 16 "); Console.ResetColor(); Console.Write("个字符）：");
+                string? input = Console.ReadLine();
+                if (input == "")
+                {
+                    return 16;
+                }
+                if (int.TryParse(input, out int charCount))
+                {
+                    if (charCount > 0)
+                    {
+                        return charCount;
+                    }
+                }
+            }
+        }
+
+        #endregion Token
+
+        #region yteArray
+
+        private static void CreateByteArray(string choice)
+        {
+            int arrayLength = GetByteArrayLength();
+            if (arrayLength > 0)
+            {
+                int createCount = GetCreateCount(2, $"选择类型： {choice}", $"数组长度： {arrayLength} 字节", "生成数量：");
+                var sb = new StringBuilder();
+                using (var randoom = new Honoo.Randoom(_seed))
+                {
+                    byte[] buffer = new byte[arrayLength];
+                    for (int i = 0; i < createCount; i++)
+                    {
+                        sb.AppendLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                        randoom.NextNonZeroBytes(buffer);
+                        string str = BitConverter.ToString(buffer);
+                        sb.AppendLine(str);
+                        sb.AppendLine(str.Replace("-", ""));
+                        sb.AppendLine("byte[] bytes = new byte[] { 0x" + str.Replace("-", ", 0x") + " };");
+                        sb.AppendLine(Convert.ToBase64String(buffer));
+                        if (i < createCount - 1)
+                        {
+                            sb.AppendLine();
+                        }
+                    }
+                }
+                Finish(sb.ToString(), $"选择类型： {choice}", $"数组长度： {arrayLength} 字节", $"生成数量： {createCount}");
+            }
+        }
+
+        private static int GetByteArrayLength()
+        {
+            Console.Clear();
+            Console.WriteLine("=======================================================================================");
+            Console.WriteLine();
+            Console.WriteLine("                            Randoom creater   runtime " + Environment.Version);
+            Console.WriteLine();
+            Console.WriteLine("=======================================================================================");
+            Console.WriteLine();
+            Console.WriteLine("  字节数组可用于对称加密算法、HMAC、密钥交换随机数等");
+            Console.WriteLine();
+            Console.WriteLine("  1. 64 位 8 字节");
+            Console.Write("  2. 128 位 16 字节"); Console.ForegroundColor = ConsoleColor.DarkYellow; Console.WriteLine(" （默认）"); Console.ResetColor();
+            Console.WriteLine("  3. 192 位 24 字节");
+            Console.WriteLine("  4. 256 位 32 字节");
+            Console.WriteLine("  5. 512 位 64 字节");
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.Write("按键选择项目 （回车选择默认项）：");
+            while (true)
+            {
+                var kc = Console.ReadKey(true).KeyChar;
+                switch (kc)
+                {
+                    case '1': return 8;
+                    case '2': case '\r': Console.WriteLine(); return 16;
+                    case '3': return 24;
+                    case '4': return 32;
+                    case '5': return 64;
+                    default: continue;
+                }
+            }
+        }
+
+        #endregion yteArray
+
+        #region Mask
+
+        private static void CreateByMask(string choice)
+        {
+            string mask = GetMask();
+            if (!string.IsNullOrWhiteSpace(mask))
+            {
+                int createCount = GetCreateCount(4, $"选择类型： {choice}", $"掩码文本： {mask}", "生成数量：");
+                var sb = new StringBuilder();
+                using (var randoom = new Honoo.Randoom(_seed))
+                {
+                    for (int i = 0; i < createCount; i++)
+                    {
+                        sb.AppendLine(randoom.NextString(mask));
+                    }
+                }
+                Finish(sb.ToString(), $"选择类型： {choice}", $"掩码文本： {mask}", $"生成数量： {createCount}");
+            }
+        }
+
+        private static XConfigManager CreateMaskStore()
+        {
+            var manager = new XConfigManager();
+            manager.Default.Comment.SetValue("\r\n" + MASK_DESCRIPTION + "\r\n");
+            manager.Default.Properties.Add("1", new XString("+mmmmm{-}mmmmm{-}mmmmm{-}mmmmm{-}mmmmm")).Attributes.Add("description", new XConfigAttribute("模拟 Windows 序列号"));
+            manager.Default.Properties.Add("2", new XString("h[8]{-}h[4]{-}h[4]{-}h[4]{-}h[12]")).Attributes.Add("description", new XConfigAttribute("模拟 GUID"));
+            manager.Default.Properties.Add("3", new XString("{WPD888-5}DDDD{-}DDDDD{-}DDDDD")).Attributes.Add("description", new XConfigAttribute("模拟 Macromedia 8 序列号"));
+            manager.Default.Properties.Add("4", new XString("ccccccccccccccccccccccccc@ABCabc12345~!@#$%^*")).Attributes.Add("description", new XConfigAttribute("自定义字符"));
+            manager.Save("mask.xml");
+            return manager;
+        }
+
+        private static string GetMask()
+        {
+            Console.Clear();
+            Console.WriteLine("=======================================================================================");
+            Console.WriteLine();
+            Console.WriteLine("                            Randoom creater   runtime " + Environment.Version);
+            Console.WriteLine();
+            Console.WriteLine("=======================================================================================");
+            Console.WriteLine();
+            Console.WriteLine("  使用掩码生成随机字符串（编辑 mask.xml 增加掩码模板）");
+            Console.WriteLine();
+            foreach (var mask in _masks)
+            {
+                string str = $"  {mask.Key}. {mask.Value.Item1}".PadRight(_maskPadding, ' ');
+                Console.Write(str); Console.ForegroundColor = ConsoleColor.DarkGray; Console.WriteLine($" {mask.Value.Item2}"); Console.ResetColor();
+            }
+            Console.WriteLine();
+            Console.WriteLine("  Z. 返回主菜单");
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.Write("按键选择项目：");
+            while (true)
+            {
+                var kc = Console.ReadKey(true).KeyChar;
+                if (kc == 'Z' || kc == 'z')
+                {
+                    Console.WriteLine();
+                    return string.Empty;
+                }
+                if (_masks.TryGetValue(kc, out Tuple<string, string>? value))
+                {
+                    return value.Item1;
+                }
+            }
+        }
+
+        private static void LoadMaskStore(XConfigManager manager)
+        {
+            foreach (var kv in manager.Default.Properties)
+            {
+                XString property = (XString)kv.Value;
+                char pr = char.Parse(kv.Key);
+                string mask = property.GetStringValue();
+                string des = property.Attributes.GetValue("description", new XConfigAttribute(string.Empty)).GetStringValue();
+                _maskPadding = Math.Max(_maskPadding, mask.Length);
+                _masks.Add(pr, new Tuple<string, string>(mask, des));
+            }
+            _maskPadding += 9;
+        }
+
+        #endregion Mask
+
+        private static byte[] BuildSeed()
         {
             var seed = new List<byte>();
             int count = 0;
@@ -117,19 +339,20 @@ namespace Randoom
             Console.WriteLine();
             Console.WriteLine("=======================================================================================");
             Console.WriteLine();
+            Console.WriteLine("  生成的随机数种子在当前程序域使用");
+            Console.WriteLine();
             Console.WriteLine("  0/256");
             Console.WriteLine();
             Console.WriteLine();
-            Console.Write("按任意键获取随机事件,回车键终止，生成的随机数种子在当前实例使用:");
+            Console.Write("按任意键获取随机事件，回车键终止：");
             while (true)
             {
                 var kc = Console.ReadKey(true).KeyChar;
                 if (kc == '\r')
                 {
-                    _seed = seed.ToArray();
-                    Console.SetCursorPosition(34, 9);
+                    Console.SetCursorPosition(34, 11);
                     Console.WriteLine();
-                    break;
+                    return seed.ToArray();
                 }
                 else
                 {
@@ -140,13 +363,13 @@ namespace Randoom
                     seed.Add((byte)(v >> 16));
                     seed.Add((byte)(v >> 24));
                     count += 4;
-                    Console.SetCursorPosition(2, 6);
+                    Console.SetCursorPosition(2, 8);
                     Console.Write("{0}/256", count);
                 }
             }
         }
 
-        private static void Create(string choice, int byteCount, int count)
+        private static void Finish(string result, params string[] explain)
         {
             Console.Clear();
             Console.WriteLine("=======================================================================================");
@@ -155,75 +378,15 @@ namespace Randoom
             Console.WriteLine();
             Console.WriteLine("=======================================================================================");
             Console.WriteLine();
-            Console.WriteLine($"  字符选择 - {choice}");
-            Console.WriteLine($"  数组长度 - {byteCount} bytes");
-            Console.WriteLine($"  生成数量 - {count}");
-            Console.WriteLine();
-            Console.WriteLine();
-            using (var randoom = new Honoo.Randoom(_seed))
+            foreach (var str in explain)
             {
-                byte[] buffer = new byte[byteCount];
-                for (int i = 0; i < count; i++)
-                {
-                    Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                    randoom.NextNonZeroBytes(buffer);
-                    string str = BitConverter.ToString(buffer);
-                    Console.WriteLine(str);
-                    Console.WriteLine(str.Replace("-", ""));
-                    Console.WriteLine("byte[] bytes = new byte[] { 0x" + str.Replace("-", ", 0x") + " };");
-                    Console.WriteLine(Convert.ToBase64String(buffer));
-                    Console.WriteLine();
-                }
+                Console.WriteLine($"  {str}");
             }
+            Console.WriteLine();
+            Console.WriteLine(result);
         }
 
-        private static void Create(string choice, int charCount, char token, int count)
-        {
-            Console.Clear();
-            Console.WriteLine("=======================================================================================");
-            Console.WriteLine();
-            Console.WriteLine("                            Randoom creater   runtime " + Environment.Version);
-            Console.WriteLine();
-            Console.WriteLine("=======================================================================================");
-            Console.WriteLine();
-            Console.WriteLine($"  字符选择 - {choice}");
-            Console.WriteLine($"  字符数量 - {charCount}");
-            Console.WriteLine($"  生成数量 - {count}");
-            Console.WriteLine();
-            Console.WriteLine();
-            using (var randoom = new Honoo.Randoom(_seed))
-            {
-                for (int i = 0; i < count; i++)
-                {
-                    Console.WriteLine(randoom.NextString(charCount, token));
-                }
-            }
-        }
-
-        private static void Create(string choice, string mask, int count)
-        {
-            Console.Clear();
-            Console.WriteLine("=======================================================================================");
-            Console.WriteLine();
-            Console.WriteLine("                            Randoom creater   runtime " + Environment.Version);
-            Console.WriteLine();
-            Console.WriteLine("=======================================================================================");
-            Console.WriteLine();
-            Console.WriteLine($"  字符选择 - {choice}");
-            Console.WriteLine($"  掩码文本 - {mask}");
-            Console.WriteLine($"  生成数量 - {count}");
-            Console.WriteLine();
-            Console.WriteLine();
-            using (var randoom = new Honoo.Randoom(_seed))
-            {
-                for (int i = 0; i < count; i++)
-                {
-                    Console.WriteLine(randoom.NextString(mask));
-                }
-            }
-        }
-
-        private static int GetByteCount()
+        private static int GetCreateCount(int defaultCount, params string[] explain)
         {
             while (true)
             {
@@ -234,164 +397,23 @@ namespace Randoom
                 Console.WriteLine();
                 Console.WriteLine("=======================================================================================");
                 Console.WriteLine();
-                Console.WriteLine($"  对称加密算法/HMAC/密钥交换随机数");
-                Console.WriteLine();
-                Console.WriteLine("  1. 64 bit - 8 bytes");
-                Console.WriteLine("  2. 128 bit - 16 bytes （默认）");
-                Console.WriteLine("  3. 192 bit - 24 bytes");
-                Console.WriteLine("  4. 256 bit - 32 bytes");
-                Console.WriteLine("  5. 512 bit - 64 bytes");
-                Console.WriteLine();
-                Console.WriteLine("  Z. 返回主菜单");
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.Write("按键选择项目 （回车选择默认项）:");
-                while (true)
+                foreach (var str in explain)
                 {
-                    var kc = Console.ReadKey(true).KeyChar;
-                    switch (kc)
-                    {
-                        case '1': return 8;
-                        case '2': case '\r': Console.WriteLine(); return 16;
-                        case '3': return 24;
-                        case '4': return 32;
-                        case '5': return 64;
-                        case 'Z': case 'z': return 0;
-                        default: continue;
-                    }
+                    Console.WriteLine($"  {str}");
                 }
-            }
-        }
-
-        private static int GetCharCount(string choice)
-        {
-            while (true)
-            {
-                Console.Clear();
-                Console.WriteLine("=======================================================================================");
-                Console.WriteLine();
-                Console.WriteLine("                            Randoom creater   runtime " + Environment.Version);
-                Console.WriteLine();
-                Console.WriteLine("=======================================================================================");
-                Console.WriteLine();
-                Console.WriteLine($"  字符选择 - {choice}");
                 Console.WriteLine();
                 Console.WriteLine();
-                Console.Write("输入要生成字符串的字符数量，按回车确认 （直接回车选择 16 字符）:");
+                Console.Write("输入要生成的数量，按回车确认 （直接回车选择"); Console.ForegroundColor = ConsoleColor.DarkYellow; Console.Write($" {defaultCount} "); Console.ResetColor(); Console.Write("条）：");
                 string? input = Console.ReadLine();
                 if (input == "")
                 {
-                    return 16;
+                    return defaultCount;
                 }
                 if (int.TryParse(input, out int charCount))
                 {
-                    return charCount;
-                }
-            }
-        }
-
-        private static int GetCount(string choice, string sub)
-        {
-            while (true)
-            {
-                Console.Clear();
-                Console.WriteLine("=======================================================================================");
-                Console.WriteLine();
-                Console.WriteLine("                            Randoom creater   runtime " + Environment.Version);
-                Console.WriteLine();
-                Console.WriteLine("=======================================================================================");
-                Console.WriteLine();
-                Console.WriteLine($"  字符选择 - {choice}");
-                Console.WriteLine($"  {sub}");
-                Console.WriteLine();
-                Console.WriteLine("  1. 生成数量 - 4  （默认）");
-                Console.WriteLine("  2. 生成数量 - 8");
-                Console.WriteLine("  3. 生成数量 - 16");
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.Write("按键选择项目 （回车选择默认项）:");
-                while (true)
-                {
-                    var kc = Console.ReadKey(true).KeyChar;
-                    switch (kc)
+                    if (charCount > 0)
                     {
-                        case '1': case '\r': return 4;
-                        case '2': return 8;
-                        case '3': return 16;
-                        default: continue;
-                    }
-                }
-            }
-        }
-
-        private static string GetMask(string choice)
-        {
-            while (true)
-            {
-                var choices = new List<Tuple<char, string, string>>();
-                if (File.Exists("mask.xml"))
-                {
-                    using (var manager = new XConfigManager("mask.xml"))
-                    {
-                        foreach (var kv in manager.Default.Properties)
-                        {
-                            XString property = (XString)kv.Value;
-                            char pr = char.Parse(kv.Key);
-                            string mask = property.GetStringValue();
-                            string des = property.Attributes.GetValue("description", new XConfigAttribute(string.Empty)).GetStringValue();
-                            choices.Add(new Tuple<char, string, string>(pr, mask, mask + " ||| " + des));
-                        }
-                    }
-                }
-                else
-                {
-                    using (var manager = new XConfigManager())
-                    {
-                        manager.Default.Comment.SetValue("\r\n" + MASK_DESCRIPTION + "\r\n");
-                        manager.Default.Properties.Add("1", new XString("+mmmmm{-}mmmmm{-}mmmmm{-}mmmmm{-}mmmmm")).Attributes.Add("description", new XConfigAttribute("模拟 Windows 序列号"));
-                        choices.Add(new Tuple<char, string, string>('1', "+mmmmm{-}mmmmm{-}mmmmm{-}mmmmm{-}mmmmm", "+mmmmm{-}mmmmm{-}mmmmm{-}mmmmm{-}mmmmm ||| 模拟 Windows 序列号"));
-                        manager.Default.Properties.Add("2", new XString("h[8]{-}h[4]{-}h[4]{-}h[4]{-}h[12]")).Attributes.Add("description", new XConfigAttribute("模拟 GUID"));
-                        choices.Add(new Tuple<char, string, string>('2', "h[8]{-}h[4]{-}h[4]{-}h[4]{-}h[12]", "h[8]{-}h[4]{-}h[4]{-}h[4]{-}h[12] ||| 模拟 GUID"));
-                        manager.Default.Properties.Add("3", new XString("{WPD888-5}DDDD{-}DDDDD{-}DDDDD")).Attributes.Add("description", new XConfigAttribute("模拟 Macromedia 8 序列号"));
-                        choices.Add(new Tuple<char, string, string>('3', "{WPD888-5}DDDD{-}DDDDD{-}DDDDD", "{WPD888-5}DDDD{-}DDDDD{-}DDDDD ||| 模拟 Macromedia 8 序列号"));
-                        manager.Default.Properties.Add("4", new XString("{ccccccccccccccccccccccccc@ABCabc12345~!@#$%^*")).Attributes.Add("description", new XConfigAttribute("自定义字符")); ;
-                        choices.Add(new Tuple<char, string, string>('4', "ccccccccccccccccccccccccc@ABCabc12345~!@#$%^*", "ccccccccccccccccccccccccc@ABCabc12345~!@#$%^* ||| 自定义字符"));
-                        manager.Save("mask.xml");
-                    }
-                }
-
-                Console.Clear();
-                Console.WriteLine("=======================================================================================");
-                Console.WriteLine();
-                Console.WriteLine("                            Randoom creater   runtime " + Environment.Version);
-                Console.WriteLine();
-                Console.WriteLine("=======================================================================================");
-                Console.WriteLine();
-                Console.WriteLine($"  字符选择 - {choice}");
-                Console.WriteLine();
-                foreach (var item in choices)
-                {
-                    Console.WriteLine($"  {item.Item1}. {item.Item3}");
-                }
-                Console.WriteLine();
-                Console.WriteLine("  Z. 返回主菜单");
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.Write("按键选择项目:");
-                while (true)
-                {
-                    var kc = Console.ReadKey(true).KeyChar;
-                    if (kc == 'Z' || kc == 'z')
-                    {
-                        Console.WriteLine();
-                        return string.Empty;
-                    }
-                    foreach (var item in choices)
-                    {
-                        if (kc == item.Item1)
-                        {
-                            return item.Item2;
-                        }
+                        return charCount;
                     }
                 }
             }
