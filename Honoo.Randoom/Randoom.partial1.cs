@@ -151,16 +151,16 @@ namespace Honoo
             }
             //
             int offset = mask.IndexOf('@');
-            if (offset > 0)
+            if (offset >= 0)
             {
                 char[] customs = mask.ToCharArray(offset + 1, mask.Length - offset - 1);
                 _rooms['c'].ReplaceSource(customs);
             }
             else
             {
+                _rooms['c'].ReplaceSource(null);
                 offset = mask.Length;
             }
-
             char[] marks = mask.ToCharArray(0, offset);
             //
             var tags = new List<char>();
@@ -251,8 +251,7 @@ namespace Honoo
             {
                 if (tags[i] != '!')
                 {
-                    Room room = _rooms[tags[i]];
-                    chars[i] = room.Pick();
+                    chars[i] = _rooms[tags[i]].Pick();
                 }
             }
             if (senChanged)
