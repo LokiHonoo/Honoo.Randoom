@@ -1,37 +1,43 @@
-name: Release master
+name: Release
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
   # 允许手动触发 
   workflow_dispatch:
 
 jobs:
-  pack_app:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          # The repository owner and the repository name joined together by "/".
-          # If github-token is specified, this is the repository that artifacts will be downloaded from.
-          # Optional. Default is ${{ github.repository }}
-          repository: ${{ github.repository }}
-      
-      - uses: actions/download-artifact@v4
-        with:
-          # Name of the artifact to download.
-          # If unspecified, all artifacts for the run are downloaded.
-          # Optional.
-          name: bin
-         
-      - run: |
-          7z a -tzip Randoom.master.zip bin/*
+  build:
 
-      - name: Upload
-        uses: actions/upload-artifact@v4
-        with:
-          name: Randoom.master
-          # A file, directory or wildcard pattern that describes what to upload
-          path: "Randoom.master.zip"
+    runs-on: windows-latest
+	
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v2
+	
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 8.0.14
+		
+    - name: Install dependencies
+      run: dotnet restore
+		
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+      
+    - name: Zip the Build
+      run: zip -r Randoom.net80.${{ github.ref }}.zip ./bin/Release/net8.0/ 
+
+    - name: Create Release and Upload Release Asset
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        tag_name: ${{ github.ref }}
+        name: Release ${{ github.ref }}
+        body: TODO New Release.
+        draft: false
+        prerelease: false
+        files: |
+          Randoom.net80.${{ github.ref }}.zip
