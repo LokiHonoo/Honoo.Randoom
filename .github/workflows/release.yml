@@ -31,10 +31,11 @@ jobs:
       run: dotnet build --configuration Release --no-restore -f net8.0 .\Randoom\Randoom.csproj
       
     - name: Zip the Build
-      run: tar -cvf Randoom.net8.tar.gz -C'bin\Release\net8.0' .
+      run: tar -cvf Randoom.${{ args.version }}.net8.tar.gz -C'bin\Release\net8.0' .
 
     - name: Create and upload Release
       uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
       with:
         tag_name: ${{ github.ref }}
         name: ${{ github.ref }}
