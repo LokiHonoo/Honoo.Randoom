@@ -28,7 +28,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
       
     - name: Zip the Build
-      run: zip -r Randoom.net80.zip ./bin/Release/net8.0/ 
+      run: tar -acf Randoom.master.net80.zip ./bin/Release/net8.0/
 
     - name: Create Release and Upload Release Asset
       uses: softprops/action-gh-release@v1
@@ -40,4 +40,4 @@ jobs:
         draft: false
         prerelease: false
         files: |
-          Randoom.net80.zip
+          Randoom.master.net80.zip
