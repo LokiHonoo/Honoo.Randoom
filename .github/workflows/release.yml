@@ -28,7 +28,7 @@ jobs:
       run: dotnet restore .\Randoom\Randoom.csproj
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build --configuration Release --no-restore -f net8.0 .\Randoom\Randoom.csproj
       
     - name: Zip the Build
       run: tar -cvf Randoom.net8.tar.gz -C'bin\Release\net8.0' .
