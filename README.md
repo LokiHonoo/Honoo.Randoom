@@ -2,6 +2,7 @@
 
 - [Honoo.Randoom](#honoorandoom)
   - [INTRODUCTION](#introduction)
+  - [SCREENSHOTS](#screenshots)
   - [GUIDE](#guide)
     - [NuGet](#nuget)
   - [USAGE](#usage)
@@ -10,6 +11,10 @@
 ## INTRODUCTION
 
 Just a random.
+
+## SCREENSHOTS
+
+![screenshots1](screenshots/screenshots1.png)
 
 ## GUIDE
 
