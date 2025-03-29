@@ -28,5 +28,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Honoo.Randoom\Honoo.Randoom.csproj" />
   </ItemGroup>
+	
 
 </Project>

@@ -25,7 +25,6 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Restore products
-      run: dotnet restore .\Honoo.Randoom\Honoo.Randoom.csproj
       run: dotnet restore .\Randoom\Randoom.csproj
 
     - name: Build
