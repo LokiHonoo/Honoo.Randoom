@@ -5,7 +5,7 @@ on:
       - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
 
   workflow_dispatch:
-    args:
+    inputs:	
       version:
         default: 'master'
         required: true
@@ -31,7 +31,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore -f net8.0 .\Randoom\Randoom.csproj
       
     - name: Zip the Build
-      run: tar -cvf Randoom.${{ args.version }}.net8.tar.gz -C'bin\Release\net8.0' .
+      run: tar -cvf Randoom.${{ inputs.version }}.net8.tar.gz -C'bin\Release\net8.0' .
 
     - name: Create and upload Release
       uses: softprops/action-gh-release@v2
