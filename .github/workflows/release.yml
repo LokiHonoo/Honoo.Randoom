@@ -12,10 +12,7 @@ on:
         type: string
 
 env:
-  if: ${{ startsWith(github.ref, 'refs/tags/') }}
-  version: ${{ github.ref_name }}
-  if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-  version: ${{ inputs.version }}
+  version: ${{ !startsWith(github.ref, 'refs/tags/') && inputs.version || github.ref_name }}
   
 jobs:
   build:
@@ -40,23 +37,10 @@ jobs:
       # run: tar -cvf Randoom.net8.tar.gz -C'bin\Release\net8.0' .
       uses: montudor/action-zip@v1
       with:
-        args: zip -qq -r Randoom.net8.zip bin\Release\net8.0
+        args: zip -qq -r Randoom.${{ env.version }}.net8.zip bin\Release\net8.0
 
-    - name: Create and upload Release on push
+    - name: Create and upload Release
       uses: softprops/action-gh-release@v2
-      if: ${{ startsWith(github.ref, 'refs/tags/') }}
-      with:
-        tag_name: ${{ github.ref_name }}
-        name: ${{ github.ref_name }}
-        body: TODO New Release.
-        draft: false
-        prerelease: false
-        files: |
-          Randoom.net8.zip
-
-    - name: Create and upload Release on workflow_dispatch
-      uses: softprops/action-gh-release@v2
-      if: ${{ !startsWith(github.ref, 'refs/tags/') }}
       with:
         tag_name: $env.version
         name: ${{ env.version }}
@@ -64,4 +48,4 @@ jobs:
         draft: false
         prerelease: false
         files: |
-          Randoom.net8.zip
+          Randoom.${{ env.version }}.net8.zip
