@@ -12,7 +12,7 @@ on:
         type: string
 
 env:
-  version: ${{ !startsWith(github.ref, 'refs/tags/') && inputs.version || github.ref_name }}
+  version: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || inputs.version }}
   
 jobs:
   build:
@@ -35,9 +35,7 @@ jobs:
       
     - name: Zip the Build
       # run: tar -cvf Randoom.net8.tar.gz -C'bin\Release\net8.0' .
-      uses: montudor/action-zip@v1
-      with:
-        args: zip -qq -r Randoom.${{ env.version }}.net8.zip bin\Release\net8.0
+      run: Compress-Archive -Path "bin\Release\net8.0\*.*" -DestinationPath Randoom.${{ env.version }}.net8.zip
 
     - name: Create and upload Release
       uses: softprops/action-gh-release@v2
