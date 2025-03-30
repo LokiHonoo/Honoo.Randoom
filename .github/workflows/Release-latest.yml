@@ -41,10 +41,9 @@ jobs:
     - name: Create Release and upload files
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: latest
+        tag_name: ${{ env.name }}
         name: ${{ env.name }}
         body: Randoom demo with lib Honoo.Randoom.dll.
-        draft: false
-        prerelease: false
+        make_latest: true
         files: |
           Randoom.net8.zip
