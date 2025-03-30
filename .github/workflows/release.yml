@@ -2,12 +2,12 @@ name: Release
 on:
   push:
     tags:
-      # Push events to matching v*, i.e. v1.0, v20.15.10
-      - v*
+      - v* # Push events to matching v*, i.e. v1.0, v20.15.10
 
   workflow_dispatch:
     inputs:
       version:
+        description: 'Append to final filename'
         default: 'latest'
         required: true
         type: string
@@ -26,20 +26,16 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: [8.0.x]
+        dotnet-version: 8.0.x
 
     - name: Restore products
-      # run: dotnet restore
       run: dotnet restore .\Randoom\Randoom.csproj
 
     - name: Build
-      # run: dotnet build --configuration Release --no-restore
       run: dotnet build --configuration Release --no-restore -f net8.0 .\Randoom\Randoom.csproj
 
     - name: Zip the Build
-      # Windows tar tool.
       # run: tar -cvf Randoom.${{ env.version }}.net8.tar.gz -C'bin\Release\net8.0' .
-      # Windows powershell.
       run: Compress-Archive -Path bin\Release\net8.0\*.* -DestinationPath Randoom.${{ env.version }}.net8.zip
 
     - name: Create Release and upload files
