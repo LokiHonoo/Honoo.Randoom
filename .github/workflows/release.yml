@@ -35,7 +35,7 @@ jobs:
       
     - name: Zip the Build
       # run: tar -cvf Randoom.net8.tar.gz -C'bin\Release\net8.0' .
-      run: Compress-Archive -Path "bin\Release\net8.0\*.*" -DestinationPath Randoom.${{ env.version }}.net8.zip
+      run: Compress-Archive -Path bin\Release\net8.0\*.* -DestinationPath Randoom.${{ env.version }}.net8.zip
 
     - name: Create and upload Release
       uses: softprops/action-gh-release@v2
