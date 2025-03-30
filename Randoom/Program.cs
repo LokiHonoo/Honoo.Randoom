@@ -177,7 +177,7 @@ namespace Randoom
 
         #endregion Token
 
-        #region yteArray
+        #region ByteArray
 
         private static void CreateByteArray(string choice)
         {
@@ -242,7 +242,7 @@ namespace Randoom
             }
         }
 
-        #endregion yteArray
+        #endregion ByteArray
 
         #region Mask
 
